@@ -1,6 +1,6 @@
 %define name 	linphone
 %define version 1.6.0
-%define release %mkrel 1
+%define release %mkrel 2
 
 %define major	1
 %define libname %mklibname %name %major
@@ -88,6 +88,19 @@ title="LinPhone" \
 longtitle="Voice over IP" \
 section="More Applications/Communications"
 EOF
+
+rm -rf %_datadir/applications/%{name}.desktop
+cat > %{buildroot}%{_datadir}/applications/%{name}.desktop << EOF
+[Desktop Entry]
+Name=Linphone
+Comment=Voice over IP Application
+Exec=linphone
+Icon=linphone2
+Terminal=false
+Type=Application
+Categories=X-MandrivaLinux-Internet-VideoConference;
+EOF
+
 
 #icons
 mkdir -p $RPM_BUILD_ROOT/%_liconsdir
