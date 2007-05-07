@@ -1,6 +1,6 @@
 %define name 	linphone
 %define version 1.6.0
-%define release %mkrel 2
+%define release %mkrel 3
 
 %define major	1
 %define libname %mklibname %name %major
@@ -86,7 +86,8 @@ icon="%{name}.png" \
 needs="x11" \
 title="LinPhone" \
 longtitle="Voice over IP" \
-section="More Applications/Communications"
+section="More Applications/Communications" \
+xdg="true"
 EOF
 
 rm -rf %_datadir/applications/%{name}.desktop
