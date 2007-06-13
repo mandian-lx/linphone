@@ -18,6 +18,7 @@ Source2:	%{name}48.png
 Source3:	%{name}32.png
 Source4:	%{name}16.png
 Patch0:		linphone-1.5.0-ppc.patch
+BuildRequires:	desktop-file-utils
 BuildRequires:	SDL-devel
 BuildRequires:	ffmpeg-devel
 BuildRequires:	jackit-devel
