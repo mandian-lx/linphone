@@ -26,7 +26,6 @@ BuildRequires:	libpanel-applet-2-devel
 BuildRequires:	libreadline-devel
 BuildRequires:	libspeex-devel
 BuildRequires:	ncurses-devel
-BuildRequires:	gtk-doc docbook-dtd41-sgml docbook-dtd30-sgml
 BuildRoot: 	%{_tmppath}/%{name}-buildroot
 
 %description
@@ -92,6 +91,9 @@ install -m 644 %{_sourcedir}/linphone48.png \
 %multiarch_includes %{buildroot}%{_includedir}/linphone/config.h
 %endif
 
+# remove unwanted docs, generated if doxygen is installed
+rm -rf $RPM_BUILD_ROOT%{_docdir}/ortp
+
 %clean
 rm -rf %{buildroot}
 
@@ -131,7 +133,6 @@ rm -rf %{buildroot}
 
 %files -n %{libname}-devel
 %defattr(-,root,root)
-%{_defaultdocdir}/ortp
 %dir %{_includedir}/linphone
 %dir %{_includedir}/ortp
 %if %mdkversion >= 1020
