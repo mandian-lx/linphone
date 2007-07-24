@@ -1,6 +1,6 @@
 %define name 	linphone
 %define version 1.7.1
-%define release %mkrel 1
+%define release %mkrel 2
 
 %define major	1
 %define libname %mklibname %name %major
@@ -17,7 +17,9 @@ Source1:	http://download.savannah.gnu.org/releases/linphone/stable/sources/linph
 Source2:	%{name}48.png
 Source3:	%{name}32.png
 Source4:	%{name}16.png
-Patch0:		linphone-1.5.0-ppc.patch
+Patch0: 	linphone-1.5.0-ppc.patch
+Patch1: 	linphone-1.7.1-show_help.patch
+BuildRequires:	autoconf
 BuildRequires:	desktop-file-utils
 BuildRequires:	SDL-devel
 BuildRequires:	ffmpeg-devel
@@ -56,8 +58,10 @@ Libraries and includes files for developing programs based on %name.
 %prep
 %setup -q
 %patch0 -p1 -b .ppc
+%patch1 -p1 -b .show_help
 
 %build
+autoconf
 %configure2_5x \
     --enable-static \
     --enable-shared \
@@ -87,6 +91,15 @@ install -m 644 %{_sourcedir}/linphone32.png \
 	$RPM_BUILD_ROOT%{_iconsdir}/hicolor/32x32/apps/linphone2.png
 install -m 644 %{_sourcedir}/linphone48.png \
 	$RPM_BUILD_ROOT%{_iconsdir}/hicolor/48x48/apps/linphone2.png
+mkdir -p $RPM_BUILD_ROOT/%_miconsdir
+ln -s ../hicolor/16x16/apps/linphone2.png \
+      $RPM_BUILD_ROOT/%_miconsdir/
+mkdir -p $RPM_BUILD_ROOT/%_iconsdir
+ln -s hicolor/32x32/apps/linphone2.png \
+      $RPM_BUILD_ROOT/%_iconsdir/
+mkdir -p $RPM_BUILD_ROOT/%_liconsdir
+ln -s ../hicolor/48x48/apps/linphone2.png \
+      $RPM_BUILD_ROOT/%_liconsdir/
 
 %if %mdkversion >= 1020
 %multiarch_includes %{buildroot}%{_includedir}/linphone/config.h
@@ -124,6 +137,9 @@ rm -rf %{buildroot}
 %{_datadir}/images/nowebcamCIF.jpg
 %_datadir/applications/*
 %{_iconsdir}/hicolor/*/apps/linphone2.png
+%{_liconsdir}/linphone2.png
+%{_iconsdir}/linphone2.png
+%{_miconsdir}/linphone2.png
 
 %files -n %{libname}
 %defattr(-,root,root)
