@@ -1,6 +1,6 @@
 %define name 	linphone
 %define version 1.7.1
-%define release %mkrel 2
+%define release %mkrel 3
 
 %define major	1
 %define libname %mklibname %name %major
@@ -21,6 +21,7 @@ Patch0: 	linphone-1.5.0-ppc.patch
 Patch1: 	linphone-1.7.1-show_help.patch
 BuildRequires:	autoconf
 BuildRequires:	desktop-file-utils
+BuildRequires:	docbook-utils
 BuildRequires:	SDL-devel
 BuildRequires:	ffmpeg-devel
 BuildRequires:	jackit-devel
