@@ -109,9 +109,6 @@ ln -s ../hicolor/48x48/apps/linphone2.png \
 # remove unwanted docs, generated if doxygen is installed
 rm -rf $RPM_BUILD_ROOT%{_docdir}/ortp
 
-find %buildroot
-exit 1
-
 %clean
 rm -rf %{buildroot}
 
