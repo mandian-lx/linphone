@@ -1,6 +1,6 @@
 %define name 	linphone
 %define version 1.7.1
-%define release %mkrel 3
+%define release %mkrel 4
 
 %define major	1
 %define libname %mklibname %name %major
@@ -21,7 +21,7 @@ Patch0: 	linphone-1.5.0-ppc.patch
 Patch1: 	linphone-1.7.1-show_help.patch
 BuildRequires:	autoconf
 BuildRequires:	desktop-file-utils
-BuildRequires:	docbook-utils
+BuildRequires:	gtk-doc
 BuildRequires:	SDL-devel
 BuildRequires:	ffmpeg-devel
 BuildRequires:	jackit-devel
@@ -108,6 +108,9 @@ ln -s ../hicolor/48x48/apps/linphone2.png \
 
 # remove unwanted docs, generated if doxygen is installed
 rm -rf $RPM_BUILD_ROOT%{_docdir}/ortp
+
+find %buildroot
+exit 1
 
 %clean
 rm -rf %{buildroot}
