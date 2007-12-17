@@ -30,7 +30,6 @@ BuildRequires:	libpanel-applet-2-devel
 BuildRequires:	libreadline-devel
 BuildRequires:	libspeex-devel
 BuildRequires:	ncurses-devel
-BuildRoot: 	%{_tmppath}/%{name}-buildroot
 
 %description
 Linphone is web-phone with a GNOME2 interface. It uses open protocols
