@@ -1,9 +1,10 @@
 %define name 	linphone
-%define version 1.7.1
-%define release %mkrel 7
+%define version 2.0.1
+%define release %mkrel 1
 
-%define major	1
+%define major	2
 %define libname %mklibname %name %major
+%define libname_devel %mklibname -d %name
 
 Name: 		%name
 Version: 	%version
@@ -17,15 +18,13 @@ Source1:	http://download.savannah.gnu.org/releases/linphone/stable/sources/linph
 Source2:	%{name}48.png
 Source3:	%{name}32.png
 Source4:	%{name}16.png
-Patch0: 	linphone-1.5.0-ppc.patch
-Patch1: 	linphone-1.7.1-show_help.patch
 BuildRequires:	autoconf
 BuildRequires:	desktop-file-utils
 BuildRequires:	gtk-doc
 BuildRequires:	SDL-devel
 BuildRequires:	ffmpeg-devel
 BuildRequires:	jackit-devel
-BuildRequires:	libosip-devel >= 2.0.0
+BuildRequires:	libosip-devel >= 3.0.3
 BuildRequires:	libpanel-applet-2-devel
 BuildRequires:	libreadline-devel
 BuildRequires:	libspeex-devel
@@ -39,33 +38,29 @@ such as SIP and RTP to make the communications.
 %package -n     %{libname}
 Summary:        Dynamic libraries from %name
 Group:          System/Libraries
-Conflicts:	%{mklibname ortp 2}
+Conflicts:	%mklibname ortp 2
 
 %description -n %{libname}
 Dynamic libraries from %name.
 
-%package -n     %{libname}-devel
+%package -n     %{libname_devel}
 Summary:        Header files and static libraries from %name
 Group:          Development/C
-Requires:       %{libname} >= %{version}
+Requires:       %{libname} = %{version}-%{release}
 Provides:       lib%{name}-devel = %{version}-%{release}
 Provides:       %{name}-devel = %{version}-%{release}
-Obsoletes:      %name-devel
-Conflicts:	%{mklibname ortp 2}-devel
+Obsoletes:      %{name}-devel < %{version}-%{release}
+Obsoletes:      %mklibname -d %{name} 1
+Conflicts:	%mklibname -d ortp 2
 
-%description -n %{libname}-devel
+%description -n %{libname_devel}
 Libraries and includes files for developing programs based on %name.
 
 %prep
 %setup -q
-%patch0 -p1 -b .ppc
-%patch1 -p1 -b .show_help
 
 %build
-autoconf
-%configure2_5x \
-    --enable-static \
-    --enable-shared \
+%configure \
     --enable-alsa \
     --disable-strict
 
@@ -78,36 +73,37 @@ rm -rf %{buildroot}
 
 %find_lang %name
 
+sed -i s/.png// %{buildroot}%{_datadir}/applications/linphone.desktop
 desktop-file-install \
 	--vendor="" \
 	--add-category="X-MandrivaLinux-Internet-VideoConference" \
 	--dir %{buildroot}%{_datadir}/applications \
-	$RPM_BUILD_ROOT%{_datadir}/applications/linphone.desktop
+	%{buildroot}%{_datadir}/applications/linphone.desktop
 
 #icons
-mkdir -p $RPM_BUILD_ROOT%{_iconsdir}/hicolor/{16x16,32x32,48x48}/apps
+mkdir -p %{buildroot}%{_iconsdir}/hicolor/{16x16,32x32,48x48}/apps
 install -m 644 %{_sourcedir}/linphone16.png \
-	$RPM_BUILD_ROOT%{_iconsdir}/hicolor/16x16/apps/linphone2.png
+	%{buildroot}%{_iconsdir}/hicolor/16x16/apps/linphone2.png
 install -m 644 %{_sourcedir}/linphone32.png \
-	$RPM_BUILD_ROOT%{_iconsdir}/hicolor/32x32/apps/linphone2.png
+	%{buildroot}%{_iconsdir}/hicolor/32x32/apps/linphone2.png
 install -m 644 %{_sourcedir}/linphone48.png \
-	$RPM_BUILD_ROOT%{_iconsdir}/hicolor/48x48/apps/linphone2.png
-mkdir -p $RPM_BUILD_ROOT/%_miconsdir
+	%{buildroot}%{_iconsdir}/hicolor/48x48/apps/linphone2.png
+mkdir -p %{buildroot}/%_miconsdir
 ln -s ../hicolor/16x16/apps/linphone2.png \
-      $RPM_BUILD_ROOT/%_miconsdir/
-mkdir -p $RPM_BUILD_ROOT/%_iconsdir
+      %{buildroot}/%_miconsdir/
+mkdir -p %{buildroot}/%_iconsdir
 ln -s hicolor/32x32/apps/linphone2.png \
-      $RPM_BUILD_ROOT/%_iconsdir/
-mkdir -p $RPM_BUILD_ROOT/%_liconsdir
+      %{buildroot}/%_iconsdir/
+mkdir -p %{buildroot}/%_liconsdir
 ln -s ../hicolor/48x48/apps/linphone2.png \
-      $RPM_BUILD_ROOT/%_liconsdir/
+      %{buildroot}/%_liconsdir/
 
 %if %mdkversion >= 1020
 %multiarch_includes %{buildroot}%{_includedir}/linphone/config.h
 %endif
 
 # remove unwanted docs, generated if doxygen is installed
-rm -rf $RPM_BUILD_ROOT%{_docdir}/ortp
+rm -rf %{buildroot}%{_docdir}/ortp
 
 %clean
 rm -rf %{buildroot}
@@ -147,9 +143,8 @@ rm -rf %{buildroot}
 %{_libdir}/liblinphone.so.%{major}*
 %{_libdir}/libmediastreamer.so.*
 %{_libdir}/libortp.so.*
-%{_libdir}/libquickstream.so.*
 
-%files -n %{libname}-devel
+%files -n %{libname_devel}
 %defattr(-,root,root)
 %dir %{_includedir}/linphone
 %dir %{_includedir}/ortp
@@ -163,4 +158,3 @@ rm -rf %{buildroot}
 %{_libdir}/*.la
 %{_libdir}/*.a
 %{_libdir}/pkgconfig/*.pc
-
