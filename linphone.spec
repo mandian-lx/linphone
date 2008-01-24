@@ -24,7 +24,7 @@ BuildRequires:	gtk-doc
 BuildRequires:	SDL-devel
 BuildRequires:	ffmpeg-devel
 BuildRequires:	jackit-devel
-BuildRequires:	libosip-devel >= 3.0.3
+BuildRequires:	libosip2-devel >= 3.0.3
 BuildRequires:	libpanel-applet-2-devel
 BuildRequires:	libreadline-devel
 BuildRequires:	libspeex-devel
