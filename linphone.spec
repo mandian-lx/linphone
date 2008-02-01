@@ -1,5 +1,5 @@
 %define name 	linphone
-%define version 2.0.1
+%define version 2.1.0
 %define release %mkrel 1
 
 %define major	2
@@ -18,7 +18,6 @@ Source1:	http://download.savannah.gnu.org/releases/linphone/stable/sources/linph
 Source2:	%{name}48.png
 Source3:	%{name}32.png
 Source4:	%{name}16.png
-BuildRequires:	autoconf
 BuildRequires:	desktop-file-utils
 BuildRequires:	gtk-doc
 BuildRequires:	SDL-devel
@@ -61,7 +60,7 @@ Libraries and includes files for developing programs based on %name.
 %setup -q
 
 %build
-%configure \
+%configure2_5x \
     --enable-alsa \
     --disable-strict
 
