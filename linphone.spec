@@ -1,9 +1,13 @@
 %define name 	linphone
 %define version 2.1.0
-%define release %mkrel 1
+%define release %mkrel 2
 
-%define major	2
-%define libname %mklibname %name %major
+%define linphone_major	2
+%define mediastreamer_major  0
+%define ortp_major  7
+%define libname_linphone %mklibname %name %linphone_major
+%define libname_mediastreamer %mklibname mediastreamer %mediastreamer_major
+%define libname_ortp %mklibname ortp %mediastreamer_major
 %define libname_devel %mklibname -d %name
 
 Name: 		%name
@@ -35,18 +39,32 @@ BuildRoot: 	%{_tmppath}/%{name}-buildroot
 Linphone is web-phone with a GNOME2 interface. It uses open protocols
 such as SIP and RTP to make the communications.
 
-%package -n     %{libname}
-Summary:        Dynamic libraries from %name
+%package -n     %{libname_linphone}
+Summary:        Primary library for %name
 Group:          System/Libraries
-Conflicts:	%mklibname ortp 2
 
-%description -n %{libname}
-Dynamic libraries from %name.
+%description -n %{libname_linphone}
+Primary library for %name.
+
+%package -n     %{libname_mediastreamer}
+Summary:        Media Streaming library for %name
+Group:          System/Libraries
+
+%description -n %{libname_mediastreamer}
+Media Streaming library for %name.
+
+%package -n     %{libname_ortp}
+Summary:        ORTP library for %name
+Group:          System/Libraries
+Conflicts:      %mklibname ortp 2
+
+%description -n %{libname_ortp}
+ORTP library for %name.
 
 %package -n     %{libname_devel}
 Summary:        Header files and static libraries from %name
 Group:          Development/C
-Requires:       %{libname} = %{version}-%{release}
+Requires:       %{libname_linphone} = %{version}-%{release}
 Provides:       lib%{name}-devel = %{version}-%{release}
 Provides:       %{name}-devel = %{version}-%{release}
 Obsoletes:      %{name}-devel < %{version}-%{release}
@@ -116,9 +134,14 @@ rm -rf %{buildroot}
 %clean_menus
 %update_icon_cache hicolor
 
-%post -n %{libname} -p /sbin/ldconfig
+%post -n %{libname_linphone} -p /sbin/ldconfig
+%postun -n %{libname_linphone} -p /sbin/ldconfig
 
-%postun -n %{libname} -p /sbin/ldconfig
+%post -n %{libname_mediastreamer} -p /sbin/ldconfig
+%postun -n %{libname_mediastreamer} -p /sbin/ldconfig
+
+%post -n %{libname_ortp} -p /sbin/ldconfig
+%postun -n %{libname_ortp} -p /sbin/ldconfig
 
 %files -f %name.lang
 %defattr(-,root,root)
@@ -138,11 +161,17 @@ rm -rf %{buildroot}
 %{_iconsdir}/linphone2.png
 %{_miconsdir}/linphone2.png
 
-%files -n %{libname}
+%files -n %{libname_linphone}
 %defattr(-,root,root)
-%{_libdir}/liblinphone.so.%{major}*
-%{_libdir}/libmediastreamer.so.*
-%{_libdir}/libortp.so.*
+%{_libdir}/liblinphone.so.%{linphone_major}*
+
+%files -n %{libname_mediastreamer}
+%defattr(-,root,root)
+%{_libdir}/libmediastreamer.so.%{mediastreamer_major}*
+
+%files -n %{libname_ortp}
+%defattr(-,root,root)
+%{_libdir}/libortp.so.%{ortp_major}*
 
 %files -n %{libname_devel}
 %defattr(-,root,root)
