@@ -40,6 +40,7 @@ BuildRequires:	libpanel-applet-2-devel
 BuildRequires:	libreadline-devel
 BuildRequires:	libspeex-devel
 BuildRequires:	ncurses-devel
+BuildRequires:	intltool
 BuildRoot: 	%{_tmppath}/%{name}-buildroot
 
 %description
