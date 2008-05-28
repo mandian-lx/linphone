@@ -1,6 +1,6 @@
 %define name 	linphone
-%define version 2.1.0
-%define release %mkrel 2
+%define version 2.1.1
+%define release %mkrel 1
 
 %define linphone_major	2
 %define mediastreamer_major  0
@@ -10,11 +10,14 @@
 %define libname_ortp %mklibname ortp %mediastreamer_major
 %define libname_devel %mklibname -d %name
 
+# for built in ortp
+%define _disable_ld_no_undefined 1
+
 Name: 		%name
 Version: 	%version
 Release: 	%release
 Summary: 	Voice over IP Application
-License: 	GPL
+License: 	GPLv2+
 Group: 		Communications
 URL: 		http://www.linphone.org/
 Source0:	http://download.savannah.gnu.org/releases/linphone/stable/sources/linphone-%{version}.tar.gz
@@ -22,6 +25,10 @@ Source1:	http://download.savannah.gnu.org/releases/linphone/stable/sources/linph
 Source2:	%{name}48.png
 Source3:	%{name}32.png
 Source4:	%{name}16.png
+Patch0:         linphone-2.1.0-imagedir.patch
+Patch1:		linphone-2.1.0-ni_maxhost_hack.patch
+Patch2:		linphone-2.1.0-no_werror.patch
+Patch3:		linphone-2.1.1-newffmpeg.patch
 BuildRequires:	desktop-file-utils
 BuildRequires:	gtk-doc
 BuildRequires:	SDL-devel
@@ -76,8 +83,27 @@ Libraries and includes files for developing programs based on %name.
 
 %prep
 %setup -q
+%patch0 -p1
+%patch1 -p1
+%patch2 -p1
+%patch3 -p0
 
 %build
+libtoolize --copy --force
+aclocal -I m4
+autoheader
+automake --force-missing --add-missing --copy
+autoconf
+rm -rf config.cache
+
+pushd mediastreamer2
+libtoolize --copy --force
+aclocal -I ../m4
+autoheader
+automake --force-missing --add-missing --copy
+autoconf
+popd
+
 %configure2_5x \
     --enable-alsa \
     --disable-strict
@@ -87,14 +113,15 @@ Libraries and includes files for developing programs based on %name.
 %install
 rm -rf %{buildroot}
 
-%makeinstall
+%makeinstall_std
 
 %find_lang %name
 
 sed -i s/.png// %{buildroot}%{_datadir}/applications/linphone.desktop
 desktop-file-install \
 	--vendor="" \
-	--add-category="X-MandrivaLinux-Internet-VideoConference" \
+	--add-category="VideoConference" \
+	--remove-category='Application' \
 	--dir %{buildroot}%{_datadir}/applications \
 	%{buildroot}%{_datadir}/applications/linphone.desktop
 
@@ -151,10 +178,11 @@ rm -rf %{buildroot}
 %_bindir/sipomatic
 %_libdir/mediastream
 %_mandir/man1/*
+%lang(cs) %_mandir/cs/man1/*
 %_datadir/pixmaps/%name
 %_datadir/sounds/%name
 %_datadir/gnome/apps/Internet/%name.desktop
-%{_datadir}/images/nowebcamCIF.jpg
+%{_datadir}/images/linphone/nowebcamCIF.jpg
 %_datadir/applications/*
 %{_iconsdir}/hicolor/*/apps/linphone2.png
 %{_liconsdir}/linphone2.png
