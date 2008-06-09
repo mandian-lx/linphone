@@ -162,14 +162,26 @@ rm -rf %{buildroot}
 %clean_menus
 %update_icon_cache hicolor
 
+%if %mdkversion < 200900
 %post -n %{libname_linphone} -p /sbin/ldconfig
+%endif
+%if %mdkversion < 200900
 %postun -n %{libname_linphone} -p /sbin/ldconfig
+%endif
 
+%if %mdkversion < 200900
 %post -n %{libname_mediastreamer} -p /sbin/ldconfig
+%endif
+%if %mdkversion < 200900
 %postun -n %{libname_mediastreamer} -p /sbin/ldconfig
+%endif
 
+%if %mdkversion < 200900
 %post -n %{libname_ortp} -p /sbin/ldconfig
+%endif
+%if %mdkversion < 200900
 %postun -n %{libname_ortp} -p /sbin/ldconfig
+%endif
 
 %files -f %name.lang
 %defattr(-,root,root)
