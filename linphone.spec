@@ -144,9 +144,7 @@ mkdir -p %{buildroot}/%_liconsdir
 ln -s ../hicolor/48x48/apps/linphone2.png \
       %{buildroot}/%_liconsdir/
 
-%if %mdkversion >= 1020
 %multiarch_includes %{buildroot}%{_includedir}/linphone/config.h
-%endif
 
 # remove unwanted docs, generated if doxygen is installed
 rm -rf %{buildroot}%{_docdir}/ortp
@@ -218,9 +216,7 @@ rm -rf %{buildroot}
 %defattr(-,root,root)
 %dir %{_includedir}/linphone
 %dir %{_includedir}/ortp
-%if %mdkversion >= 1020
 %multiarch %{multiarch_includedir}/linphone/config.h
-%endif
 %{_includedir}/linphone/*
 %{_includedir}/mediastreamer2/*
 %{_includedir}/ortp/*
