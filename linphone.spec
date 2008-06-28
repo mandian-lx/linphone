@@ -1,6 +1,6 @@
 %define name 	linphone
 %define version 2.1.1
-%define release %mkrel 1
+%define release %mkrel 2
 
 %define linphone_major	2
 %define mediastreamer_major  0
@@ -78,6 +78,8 @@ Provides:       %{name}-devel = %{version}-%{release}
 Obsoletes:      %{name}-devel < %{version}-%{release}
 Obsoletes:      %mklibname -d %{name} 1
 Conflicts:	%mklibname -d ortp 2
+Provides:	libortp-devel = %{version}-%{release}
+Provides:	ortp-devel = %{version}-%{release}
 
 %description -n %{libname_devel}
 Libraries and includes files for developing programs based on %name.
