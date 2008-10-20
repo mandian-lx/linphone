@@ -1,10 +1,10 @@
 %define name 	linphone
-%define version 2.1.1
-%define release %mkrel 2
+%define version 3.0.0
+%define release %mkrel 1
 
-%define linphone_major	2
-%define mediastreamer_major  0
-%define ortp_major  7
+%define linphone_major 3
+%define mediastreamer_major 0
+%define ortp_major 8
 %define libname_linphone %mklibname %name %linphone_major
 %define libname_mediastreamer %mklibname mediastreamer %mediastreamer_major
 %define libname_ortp %mklibname ortp %mediastreamer_major
@@ -28,20 +28,30 @@ Source4:	%{name}16.png
 Patch0:         linphone-2.1.0-imagedir.patch
 Patch1:		linphone-2.1.0-ni_maxhost_hack.patch
 Patch2:		linphone-2.1.0-no_werror.patch
-Patch3:		linphone-2.1.1-newffmpeg.patch
-BuildRequires:	desktop-file-utils
-BuildRequires:	gtk-doc
+Patch3:		linphone-2.1.1-intltoolize_fix.diff
 BuildRequires:	SDL-devel
-BuildRequires:	ffmpeg-devel
-BuildRequires:	jackit-devel
-BuildRequires:	libosip2-devel >= 3.0.3
+BuildRequires:	alsa-lib-devel
+BuildRequires:	desktop-file-utils
 BuildRequires:	exosip-devel >= 3.0.3
-BuildRequires:	libpanel-applet-2-devel
-BuildRequires:	libreadline-devel
-BuildRequires:	libspeex-devel
-BuildRequires:	ncurses-devel
+BuildRequires:	ffmpeg-devel
+BuildRequires:	gettext
+BuildRequires:	gettext-devel
+BuildRequires:	glib2-devel
+BuildRequires:	gnome-panel-devel
+BuildRequires:	gnomeui2-devel
+BuildRequires:	gsm-devel
+BuildRequires:	gtk-doc
 BuildRequires:	intltool
-BuildRoot: 	%{_tmppath}/%{name}-buildroot
+BuildRequires:	jackit-devel
+BuildRequires:	libglade2.0-devel
+BuildRequires:	libosip2-devel >= 3.0.3
+BuildRequires:	libpanel-applet-2-devel
+BuildRequires:	libtool
+BuildRequires:	ncurses-devel
+BuildRequires:	readline-devel
+BuildRequires:	resample-devel
+BuildRequires:	speex-devel
+BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
 %description
 Linphone is web-phone with a GNOME2 interface. It uses open protocols
@@ -92,6 +102,7 @@ Libraries and includes files for developing programs based on %name.
 %patch3 -p0
 
 %build
+intltoolize --copy --force
 libtoolize --copy --force
 aclocal -I m4
 autoheader
@@ -120,7 +131,7 @@ rm -rf %{buildroot}
 
 %find_lang %name
 
-sed -i s/.png// %{buildroot}%{_datadir}/applications/linphone.desktop
+perl -pi -e "s|linphone/linphone2\.png|linphone2|g" %{buildroot}%{_datadir}/applications/linphone.desktop
 desktop-file-install \
 	--vendor="" \
 	--add-category="VideoConference" \
@@ -198,13 +209,13 @@ rm -rf %{buildroot}
 %lang(cs) %_mandir/cs/man1/*
 %_datadir/pixmaps/%name
 %_datadir/sounds/%name
-%_datadir/gnome/apps/Internet/%name.desktop
 %{_datadir}/images/linphone/nowebcamCIF.jpg
 %_datadir/applications/*
 %{_iconsdir}/hicolor/*/apps/linphone2.png
 %{_liconsdir}/linphone2.png
 %{_iconsdir}/linphone2.png
 %{_miconsdir}/linphone2.png
+%{_datadir}/linphone
 
 %files -n %{libname_linphone}
 %defattr(-,root,root)
