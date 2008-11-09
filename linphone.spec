@@ -1,6 +1,6 @@
 %define name 	linphone
 %define version 3.0.0
-%define release %mkrel 1
+%define release %mkrel 2
 
 %define linphone_major 3
 %define mediastreamer_major 0
