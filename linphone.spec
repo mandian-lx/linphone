@@ -7,11 +7,11 @@
 ##%define ortp_major 8
 %define libname_linphone %mklibname %name %linphone_major
 %define libname_mediastreamer %mklibname mediastreamer %mediastreamer_major
-##%define libname_ortp %mklibname ortp %mediastreamer_major
+%define libname_ortp %mklibname ortp 0
 %define libname_devel %mklibname -d %name
 
 # for built in ortp
-%define _disable_ld_no_undefined 1
+##%define _disable_ld_no_undefined 1
 
 Name: 		%name
 Version: 	%version
@@ -29,6 +29,10 @@ Patch0:         linphone-3.0.0-imagedir.patch
 Patch1:		linphone-2.1.0-ni_maxhost_hack.patch
 Patch2:		linphone-2.1.0-no_werror.patch
 Patch3:		linphone-2.1.1-intltoolize_fix.diff
+Patch4:		linphone-3.0.0-uint.patch
+Patch5:		linphone-3.0.0-fix-str-fmt.patch
+Patch6:		linphone-3.0.0-stun.patch
+Patch7:		linphone-3.0.0-ortp-linking-fix.patch
 BuildRequires:	SDL-devel
 BuildRequires:	alsa-lib-devel
 BuildRequires:	desktop-file-utils
@@ -61,6 +65,7 @@ such as SIP and RTP to make the communications.
 %package -n     %{libname_linphone}
 Summary:        Primary library for %name
 Group:          System/Libraries
+Obsoletes:      %{libname_ortp}
 
 %description -n %{libname_linphone}
 Primary library for %name.
@@ -101,6 +106,10 @@ Libraries and includes files for developing programs based on %name.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p0
+%patch4 -p2
+%patch5 -p0
+%patch6 -p2
+%patch7 -p0
 
 %build
 intltoolize --copy --force
@@ -236,11 +245,11 @@ rm -rf %{buildroot}
 %files -n %{libname_devel}
 %defattr(-,root,root)
 %dir %{_includedir}/linphone
-%dir %{_includedir}/ortp
+#%dir %{_includedir}/ortp
 %multiarch %{multiarch_includedir}/linphone/config.h
 %{_includedir}/linphone/*
 %{_includedir}/mediastreamer2/*
-%{_includedir}/ortp/*
+#%{_includedir}/ortp/*
 %{_libdir}/*.so
 %{_libdir}/*.la
 %{_libdir}/*.a
