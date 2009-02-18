@@ -1,13 +1,13 @@
 %define name 	linphone
 %define version 3.0.0
-%define release %mkrel 2
+%define release %mkrel 3
 
 %define linphone_major 3
 %define mediastreamer_major 0
-%define ortp_major 8
+##%define ortp_major 8
 %define libname_linphone %mklibname %name %linphone_major
 %define libname_mediastreamer %mklibname mediastreamer %mediastreamer_major
-%define libname_ortp %mklibname ortp %mediastreamer_major
+##%define libname_ortp %mklibname ortp %mediastreamer_major
 %define libname_devel %mklibname -d %name
 
 # for built in ortp
@@ -25,7 +25,7 @@ Source1:	http://download.savannah.gnu.org/releases/linphone/stable/sources/linph
 Source2:	%{name}48.png
 Source3:	%{name}32.png
 Source4:	%{name}16.png
-Patch0:         linphone-2.1.0-imagedir.patch
+Patch0:         linphone-3.0.0-imagedir.patch
 Patch1:		linphone-2.1.0-ni_maxhost_hack.patch
 Patch2:		linphone-2.1.0-no_werror.patch
 Patch3:		linphone-2.1.1-intltoolize_fix.diff
@@ -51,6 +51,7 @@ BuildRequires:	ncurses-devel
 BuildRequires:	readline-devel
 BuildRequires:	resample-devel
 BuildRequires:	speex-devel
+BuildRequires:	ortp-devel
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
 %description
@@ -71,13 +72,13 @@ Group:          System/Libraries
 %description -n %{libname_mediastreamer}
 Media Streaming library for %name.
 
-%package -n     %{libname_ortp}
-Summary:        ORTP library for %name
-Group:          System/Libraries
-Conflicts:      %mklibname ortp 2
+#%package -n     %{libname_ortp}
+#Summary:        ORTP library for %name
+#Group:          System/Libraries
+#Conflicts:      %mklibname ortp 2
 
-%description -n %{libname_ortp}
-ORTP library for %name.
+#%description -n %{libname_ortp}
+#ORTP library for %name.
 
 %package -n     %{libname_devel}
 Summary:        Header files and static libraries from %name
@@ -87,16 +88,16 @@ Provides:       lib%{name}-devel = %{version}-%{release}
 Provides:       %{name}-devel = %{version}-%{release}
 Obsoletes:      %{name}-devel < %{version}-%{release}
 Obsoletes:      %mklibname -d %{name} 1
-Conflicts:	%mklibname -d ortp 2
-Provides:	libortp-devel = %{version}-%{release}
-Provides:	ortp-devel = %{version}-%{release}
+#Conflicts:	%mklibname -d ortp 2
+#Provides:	libortp-devel = %{version}-%{release}
+#Provides:	ortp-devel = %{version}-%{release}
 
 %description -n %{libname_devel}
 Libraries and includes files for developing programs based on %name.
 
 %prep
 %setup -q
-%patch0 -p1
+%patch0 -p0
 %patch1 -p1
 %patch2 -p1
 %patch3 -p0
@@ -120,7 +121,10 @@ popd
 
 %configure2_5x \
     --enable-alsa \
-    --disable-strict
+    --disable-strict \
+    --enable-external-ortp \
+    --enable-ipv6
+
 
 %make
 
@@ -225,9 +229,9 @@ rm -rf %{buildroot}
 %defattr(-,root,root)
 %{_libdir}/libmediastreamer.so.%{mediastreamer_major}*
 
-%files -n %{libname_ortp}
-%defattr(-,root,root)
-%{_libdir}/libortp.so.%{ortp_major}*
+#%files -n %{libname_ortp}
+#%defattr(-,root,root)
+#%{_libdir}/libortp.so.%{ortp_major}*
 
 %files -n %{libname_devel}
 %defattr(-,root,root)
