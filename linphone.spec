@@ -4,14 +4,9 @@
 
 %define linphone_major 3
 %define mediastreamer_major 0
-##%define ortp_major 8
 %define libname_linphone %mklibname %name %linphone_major
 %define libname_mediastreamer %mklibname mediastreamer %mediastreamer_major
-%define libname_ortp %mklibname ortp 0
 %define libname_devel %mklibname -d %name
-
-# for built in ortp
-##%define _disable_ld_no_undefined 1
 
 Name: 		%name
 Version: 	%version
@@ -55,8 +50,8 @@ BuildRequires:	ncurses-devel
 BuildRequires:	readline-devel
 BuildRequires:	resample-devel
 BuildRequires:	speex-devel
-BuildRequires:	ortp-devel
-BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
+BuildRequires:	ortp-devel != 3.0.0-2mdv2009.1
+BuildRoot:	%{_tmppath}/%{name}-%{version}
 
 %description
 Linphone is web-phone with a GNOME2 interface. It uses open protocols
@@ -65,7 +60,6 @@ such as SIP and RTP to make the communications.
 %package -n     %{libname_linphone}
 Summary:        Primary library for %name
 Group:          System/Libraries
-Obsoletes:      %{libname_ortp}
 
 %description -n %{libname_linphone}
 Primary library for %name.
@@ -77,14 +71,6 @@ Group:          System/Libraries
 %description -n %{libname_mediastreamer}
 Media Streaming library for %name.
 
-#%package -n     %{libname_ortp}
-#Summary:        ORTP library for %name
-#Group:          System/Libraries
-#Conflicts:      %mklibname ortp 2
-
-#%description -n %{libname_ortp}
-#ORTP library for %name.
-
 %package -n     %{libname_devel}
 Summary:        Header files and static libraries from %name
 Group:          Development/C
@@ -93,9 +79,6 @@ Provides:       lib%{name}-devel = %{version}-%{release}
 Provides:       %{name}-devel = %{version}-%{release}
 Obsoletes:      %{name}-devel < %{version}-%{release}
 Obsoletes:      %mklibname -d %{name} 1
-#Conflicts:	%mklibname -d ortp 2
-#Provides:	libortp-devel = %{version}-%{release}
-#Provides:	ortp-devel = %{version}-%{release}
 
 %description -n %{libname_devel}
 Libraries and includes files for developing programs based on %name.
@@ -204,13 +187,6 @@ rm -rf %{buildroot}
 %postun -n %{libname_mediastreamer} -p /sbin/ldconfig
 %endif
 
-%if %mdkversion < 200900
-%post -n %{libname_ortp} -p /sbin/ldconfig
-%endif
-%if %mdkversion < 200900
-%postun -n %{libname_ortp} -p /sbin/ldconfig
-%endif
-
 %files -f %name.lang
 %defattr(-,root,root)
 %doc COPYING README AUTHORS BUGS INSTALL ChangeLog
@@ -238,18 +214,12 @@ rm -rf %{buildroot}
 %defattr(-,root,root)
 %{_libdir}/libmediastreamer.so.%{mediastreamer_major}*
 
-#%files -n %{libname_ortp}
-#%defattr(-,root,root)
-#%{_libdir}/libortp.so.%{ortp_major}*
-
 %files -n %{libname_devel}
 %defattr(-,root,root)
 %dir %{_includedir}/linphone
-#%dir %{_includedir}/ortp
 %multiarch %{multiarch_includedir}/linphone/config.h
 %{_includedir}/linphone/*
 %{_includedir}/mediastreamer2/*
-#%{_includedir}/ortp/*
 %{_libdir}/*.so
 %{_libdir}/*.la
 %{_libdir}/*.a
