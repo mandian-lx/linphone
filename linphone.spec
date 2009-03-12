@@ -50,7 +50,7 @@ BuildRequires:	ncurses-devel
 BuildRequires:	readline-devel
 BuildRequires:	resample-devel
 BuildRequires:	speex-devel
-BuildRequires:	ortp-devel != 3.0.0-2mdv2009.1
+BuildRequires:	ortp-devel
 BuildRoot:	%{_tmppath}/%{name}-%{version}
 
 %description
