@@ -1,6 +1,6 @@
 %define name 	linphone
-%define version 3.0.0
-%define release %mkrel 4
+%define version 3.1.2
+%define release %mkrel 1
 
 %define linphone_major 3
 %define mediastreamer_major 0
@@ -21,13 +21,11 @@ Source2:	%{name}48.png
 Source3:	%{name}32.png
 Source4:	%{name}16.png
 Patch0:         linphone-3.0.0-imagedir.patch
-Patch1:		linphone-2.1.0-ni_maxhost_hack.patch
+Patch1:		linphone-3.1.1-ni_maxhost_hack.patch
 Patch2:		linphone-2.1.0-no_werror.patch
 Patch3:		linphone-2.1.1-intltoolize_fix.diff
-Patch4:		linphone-3.0.0-uint.patch
-Patch5:		linphone-3.0.0-fix-str-fmt.patch
-Patch6:		linphone-3.0.0-stun.patch
-Patch7:		linphone-3.0.0-ortp-linking-fix.patch
+Patch5:		linphone-3.1.1-fix-str-fmt.patch
+Patch7:		linphone-3.1.1-ortp-linking-fix.patch
 BuildRequires:	SDL-devel
 BuildRequires:	alsa-lib-devel
 BuildRequires:	desktop-file-utils
@@ -50,7 +48,7 @@ BuildRequires:	ncurses-devel
 BuildRequires:	readline-devel
 BuildRequires:	resample-devel
 BuildRequires:	speex-devel
-BuildRequires:	ortp-devel
+BuildRequires:	ortp-devel >= 0.16.0
 BuildRoot:	%{_tmppath}/%{name}-%{version}
 
 %description
@@ -89,35 +87,21 @@ Libraries and includes files for developing programs based on %name.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p0
-%patch4 -p2
 %patch5 -p0
-%patch6 -p2
 %patch7 -p0
 
 %build
-intltoolize --copy --force
-libtoolize --copy --force
-aclocal -I m4
-autoheader
-automake --force-missing --add-missing --copy
-autoconf
-rm -rf config.cache
+autoreconf -fi
 
 pushd mediastreamer2
-libtoolize --copy --force
-aclocal -I ../m4
-autoheader
-automake --force-missing --add-missing --copy
-autoconf
+autoreconf -fi
 popd
 
 %configure2_5x \
     --enable-alsa \
     --disable-strict \
-    --enable-external-ortp \
+    --enable-external-ortp=yes \
     --enable-ipv6
-
-
 %make
 
 %install
