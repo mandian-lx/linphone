@@ -1,5 +1,5 @@
 %define name 	linphone
-%define version 3.1.2
+%define version 3.2.0
 %define release %mkrel 1
 
 %define linphone_major 3
@@ -20,12 +20,12 @@ Source1:	http://download.savannah.gnu.org/releases/linphone/stable/sources/linph
 Source2:	%{name}48.png
 Source3:	%{name}32.png
 Source4:	%{name}16.png
-Patch0:         linphone-3.0.0-imagedir.patch
+Patch0:         linphone-3.2.0-imagedir.patch
 Patch1:		linphone-3.1.1-ni_maxhost_hack.patch
 Patch2:		linphone-2.1.0-no_werror.patch
-Patch3:		linphone-2.1.1-intltoolize_fix.diff
+Patch3:		linphone-3.2.0-intltoolize_fix.diff
 Patch5:		linphone-3.1.1-fix-str-fmt.patch
-Patch7:		linphone-3.1.1-ortp-linking-fix.patch
+Patch7:		linphone-3.2.0-ortp-linking-fix.patch
 BuildRequires:	SDL-devel
 BuildRequires:	alsa-lib-devel
 BuildRequires:	desktop-file-utils
@@ -48,7 +48,7 @@ BuildRequires:	ncurses-devel
 BuildRequires:	readline-devel
 BuildRequires:	resample-devel
 BuildRequires:	speex-devel
-BuildRequires:	ortp-devel >= 0.16.0
+BuildRequires:	ortp-devel >= 0.16.1
 BuildRoot:	%{_tmppath}/%{name}-%{version}
 
 %description
