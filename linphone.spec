@@ -1,6 +1,6 @@
 %define name 	linphone
-%define version 3.2.1
-%define release %mkrel 3
+%define version 3.3.2
+%define release %mkrel 1
 
 %define linphone_major 3
 %define mediastreamer_major 0
@@ -21,15 +21,12 @@ Source2:	%{name}48.png
 Source3:	%{name}32.png
 Source4:	%{name}16.png
 Patch0:         linphone-3.2.0-imagedir.patch
-Patch1:		linphone-3.1.1-ni_maxhost_hack.patch
-Patch2:		linphone-2.1.0-no_werror.patch
 Patch3:		linphone-3.2.0-intltoolize_fix.diff
-Patch5:		linphone-3.1.1-fix-str-fmt.patch
 Patch7:		linphone-3.2.0-ortp-linking-fix.patch
 BuildRequires:	SDL-devel
 BuildRequires:	alsa-lib-devel
 BuildRequires:	desktop-file-utils
-BuildRequires:	exosip-devel >= 3.0.3
+BuildRequires:	exosip-devel >= 3.1.0
 BuildRequires:	ffmpeg-devel
 BuildRequires:	gettext
 BuildRequires:	gettext-devel
@@ -41,14 +38,15 @@ BuildRequires:	gtk-doc
 BuildRequires:	intltool
 BuildRequires:	jackit-devel
 BuildRequires:	libglade2.0-devel
-BuildRequires:	libosip2-devel >= 3.0.3
+BuildRequires:	libosip2-devel >= 3.1.0
 BuildRequires:	libpanel-applet-2-devel
 BuildRequires:	libtool
 BuildRequires:	ncurses-devel
 BuildRequires:	readline-devel
 BuildRequires:	resample-devel
 BuildRequires:	speex-devel
-BuildRequires:	ortp-devel >= 0.16.1
+BuildRequires:	ortp-devel >= 0.16.3
+BuildRequires:	libv4l-devel
 BuildRoot:	%{_tmppath}/%{name}-%{version}
 
 %description
@@ -83,12 +81,9 @@ Libraries and includes files for developing programs based on %name.
 
 %prep
 %setup -q
-%patch0 -p0
-%patch1 -p1
-%patch2 -p1
-%patch3 -p0
-%patch5 -p0
-%patch7 -p0
+%patch0 -p0 -b .image-dir
+%patch3 -p0 -b .intltoolize_fix
+%patch7 -p0 -b .ortp-linking-fix
 
 %build
 autoreconf -fi
@@ -98,9 +93,11 @@ autoreconf -fi
 popd
 
 %configure2_5x \
+    --disable-static \
+    --disable-rpath\
     --enable-alsa \
     --disable-strict \
-    --enable-external-ortp=yes \
+    --enable-external-ortp \
     --enable-ipv6
 %make
 
@@ -142,41 +139,18 @@ ln -s ../hicolor/48x48/apps/linphone2.png \
 # remove unwanted docs, generated if doxygen is installed
 rm -rf %{buildroot}%{_docdir}/ortp
 
+# don't ship .la:
+rm -f %{buildroot}%{_libdir}/*.la
+
 %clean
 rm -rf %{buildroot}
-
-%if %mdkversion < 200900
-%post
-%update_menus
-%update_icon_cache hicolor
-%endif
-
-%if %mdkversion < 200900
-%postun
-%clean_menus
-%update_icon_cache hicolor
-%endif
-
-%if %mdkversion < 200900
-%post -n %{libname_linphone} -p /sbin/ldconfig
-%endif
-%if %mdkversion < 200900
-%postun -n %{libname_linphone} -p /sbin/ldconfig
-%endif
-
-%if %mdkversion < 200900
-%post -n %{libname_mediastreamer} -p /sbin/ldconfig
-%endif
-%if %mdkversion < 200900
-%postun -n %{libname_mediastreamer} -p /sbin/ldconfig
-%endif
 
 %files -f %name.lang
 %defattr(-,root,root)
 %doc COPYING README AUTHORS BUGS INSTALL ChangeLog
 %doc %_datadir/gnome/help/%name
 %_bindir/linphone*
-%_bindir/sipomatic
+#%_bindir/sipomatic
 %_libdir/mediastream
 %_mandir/man1/*
 %lang(cs) %_mandir/cs/man1/*
@@ -200,11 +174,9 @@ rm -rf %{buildroot}
 
 %files -n %{libname_devel}
 %defattr(-,root,root)
-%dir %{_includedir}/linphone
+#%doc %{_datadir}/doc/mediastreamer/
+%{_includedir}/linphone
 %multiarch %{multiarch_includedir}/linphone/config.h
-%{_includedir}/linphone/*
-%{_includedir}/mediastreamer2/*
+%{_includedir}/mediastreamer2
 %{_libdir}/*.so
-%{_libdir}/*.la
-%{_libdir}/*.a
 %{_libdir}/pkgconfig/*.pc
