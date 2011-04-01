@@ -1,6 +1,6 @@
 %define name 	linphone
 %define version 3.3.2
-%define release %mkrel 2
+%define release %mkrel 3
 
 %define linphone_major 3
 %define mediastreamer_major 0
@@ -23,6 +23,7 @@ Source4:	%{name}16.png
 Patch0:         linphone-3.2.0-imagedir.patch
 Patch3:		linphone-3.2.0-intltoolize_fix.diff
 Patch7:		linphone-3.2.0-ortp-linking-fix.patch
+Patch8:		linphone-3.3.2-libv4l.patch
 BuildRequires:	SDL-devel
 BuildRequires:	alsa-lib-devel
 BuildRequires:	desktop-file-utils
@@ -84,17 +85,19 @@ Libraries and includes files for developing programs based on %name.
 %patch0 -p0 -b .image-dir
 %patch3 -p0 -b .intltoolize_fix
 %patch7 -p0 -b .ortp-linking-fix
+%patch8 -p0 -b .libv4l
 
 %build
 autoreconf -fi
 
-pushd mediastreamer2
+( pushd mediastreamer2
 autoreconf -fi
-popd
+%before_configure
+popd )
 
 %configure2_5x \
     --disable-static \
-    --disable-rpath\
+    --disable-rpath \
     --enable-alsa \
     --disable-strict \
     --enable-external-ortp \
@@ -137,7 +140,7 @@ ln -s ../hicolor/48x48/apps/linphone2.png \
 %multiarch_includes %{buildroot}%{_includedir}/linphone/config.h
 
 # remove unwanted docs, generated if doxygen is installed
-rm -rf %{buildroot}%{_docdir}/ortp
+rm -rf %{buildroot}%{_docdir}/ortp %{buildroot}%{_docdir}/mediastreamer
 
 # don't ship .la:
 rm -f %{buildroot}%{_libdir}/*.la
