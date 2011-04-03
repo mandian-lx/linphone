@@ -1,9 +1,9 @@
 %define name 	linphone
-%define version 3.3.2
-%define release %mkrel 3
+%define version 3.4.3
+%define release %mkrel 1
 
-%define linphone_major 3
-%define mediastreamer_major 0
+%define linphone_major 4
+%define mediastreamer_major 1
 %define libname_linphone %mklibname %name %linphone_major
 %define libname_mediastreamer %mklibname mediastreamer %mediastreamer_major
 %define libname_devel %mklibname -d %name
@@ -21,10 +21,7 @@ Source2:	%{name}48.png
 Source3:	%{name}32.png
 Source4:	%{name}16.png
 Patch0:         linphone-3.2.0-imagedir.patch
-Patch3:		linphone-3.2.0-intltoolize_fix.diff
-Patch7:		linphone-3.2.0-ortp-linking-fix.patch
 Patch8:		linphone-3.3.2-libv4l.patch
-BuildRequires:	SDL-devel
 BuildRequires:	alsa-lib-devel
 BuildRequires:	desktop-file-utils
 BuildRequires:	exosip-devel >= 3.1.0
@@ -32,22 +29,20 @@ BuildRequires:	ffmpeg-devel
 BuildRequires:	gettext
 BuildRequires:	gettext-devel
 BuildRequires:	glib2-devel
-BuildRequires:	gnome-panel-devel
-BuildRequires:	gnomeui2-devel
 BuildRequires:	gsm-devel
 BuildRequires:	gtk-doc
 BuildRequires:	intltool
-BuildRequires:	jackit-devel
-BuildRequires:	libglade2.0-devel
+BuildRequires:	gtk+2-devel
+BuildRequires:	libxv-devel
+BuildRequires:	libxext-devel
+BuildRequires:	libx11-devel
 BuildRequires:	libosip2-devel >= 3.1.0
-BuildRequires:	libpanel-applet-2-devel
-BuildRequires:	libtool
-BuildRequires:	ncurses-devel
 BuildRequires:	readline-devel
-BuildRequires:	resample-devel
 BuildRequires:	speex-devel
 BuildRequires:	ortp-devel >= 0.16.3
 BuildRequires:	libv4l-devel
+BuildRequires:	libtheora-devel
+BuildRequires:	pulseaudio-devel
 BuildRoot:	%{_tmppath}/%{name}-%{version}
 
 %description
@@ -83,8 +78,6 @@ Libraries and includes files for developing programs based on %name.
 %prep
 %setup -q
 %patch0 -p0 -b .image-dir
-%patch3 -p0 -b .intltoolize_fix
-%patch7 -p0 -b .ortp-linking-fix
 %patch8 -p0 -b .libv4l
 
 %build
@@ -159,6 +152,7 @@ rm -rf %{buildroot}
 %lang(cs) %_mandir/cs/man1/*
 %_datadir/pixmaps/%name
 %_datadir/sounds/%name
+%_datadir/tutorials/%name
 %{_datadir}/images/linphone/nowebcamCIF.jpg
 %_datadir/applications/*
 %{_iconsdir}/hicolor/*/apps/linphone2.png
