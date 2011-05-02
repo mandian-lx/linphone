@@ -1,6 +1,6 @@
 %define name 	linphone
 %define version 3.4.3
-%define release %mkrel 1
+%define release %mkrel 2
 
 %define linphone_major 4
 %define mediastreamer_major 1
@@ -173,7 +173,7 @@ rm -rf %{buildroot}
 %defattr(-,root,root)
 #%doc %{_datadir}/doc/mediastreamer/
 %{_includedir}/linphone
-%multiarch %{multiarch_includedir}/linphone/config.h
+%{multiarch_includedir}/linphone/config.h
 %{_includedir}/mediastreamer2
 %{_libdir}/*.so
 %{_libdir}/pkgconfig/*.pc
