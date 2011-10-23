@@ -40,7 +40,6 @@ BuildRequires:	ortp-devel >= 0.16.3
 BuildRequires:	libv4l-devel
 BuildRequires:	libtheora-devel
 BuildRequires:	pulseaudio-devel
-BuildRoot:	%{_tmppath}/%{name}-%{version}
 
 %description
 Linphone is web-phone with a GNOME2 interface. It uses open protocols
