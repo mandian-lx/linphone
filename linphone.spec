@@ -1,16 +1,13 @@
-%define name 	linphone
-%define version 3.4.3
-%define release %mkrel 2
 
 %define linphone_major 4
 %define mediastreamer_major 1
-%define libname_linphone %mklibname %name %linphone_major
-%define libname_mediastreamer %mklibname mediastreamer %mediastreamer_major
+%define liblinphone %mklibname %name %linphone_major
+%define libmediastreamer %mklibname mediastreamer %mediastreamer_major
 %define libname_devel %mklibname -d %name
 
-Name: 		%name
-Version: 	%version
-Release: 	%release
+Name: 		linphone
+Version: 	3.4.3
+Release: 	3
 Summary: 	Voice over IP Application
 License: 	GPLv2+
 Group: 		Communications
@@ -49,21 +46,24 @@ BuildRoot:	%{_tmppath}/%{name}-%{version}
 Linphone is web-phone with a GNOME2 interface. It uses open protocols
 such as SIP and RTP to make the communications.
 
-%package -n     %{libname_linphone}
+#--------------------------------------------------------------------
+%package -n %{liblinphone}
 Summary:        Primary library for %name
 Group:          System/Libraries
 
-%description -n %{libname_linphone}
+%description -n %{liblinphone}
 Primary library for %name.
 
-%package -n     %{libname_mediastreamer}
+#--------------------------------------------------------------------
+%package -n %{libmediastreamer}
 Summary:        Media Streaming library for %name
 Group:          System/Libraries
 
-%description -n %{libname_mediastreamer}
+%description -n %{libmediastreamer}
 Media Streaming library for %name.
 
-%package -n     %{libname_devel}
+#--------------------------------------------------------------------
+%package -n %{libname_devel}
 Summary:        Header files and static libraries from %name
 Group:          Development/C
 Requires:       %{libname_linphone} = %{version}-%{release}
@@ -75,6 +75,7 @@ Obsoletes:      %mklibname -d %{name} 1
 %description -n %{libname_devel}
 Libraries and includes files for developing programs based on %name.
 
+#--------------------------------------------------------------------
 %prep
 %setup -q
 %patch0 -p0 -b .image-dir
@@ -138,42 +139,34 @@ rm -rf %{buildroot}%{_docdir}/ortp %{buildroot}%{_docdir}/mediastreamer
 # don't ship .la:
 rm -f %{buildroot}%{_libdir}/*.la
 
-%clean
-rm -rf %{buildroot}
 
 %files -f %name.lang
-%defattr(-,root,root)
 %doc COPYING README AUTHORS BUGS INSTALL ChangeLog
 %doc %_datadir/gnome/help/%name
 %_bindir/linphone*
-#%_bindir/sipomatic
-%_libdir/mediastream
+%_libdir/mediastream/
 %_mandir/man1/*
 %lang(cs) %_mandir/cs/man1/*
-%_datadir/pixmaps/%name
-%_datadir/sounds/%name
-%_datadir/tutorials/%name
+%_datadir/pixmaps/%name/
+%_datadir/sounds/%name/
+%_datadir/tutorials/%name/
 %{_datadir}/images/linphone/nowebcamCIF.jpg
 %_datadir/applications/*
 %{_iconsdir}/hicolor/*/apps/linphone2.png
 %{_liconsdir}/linphone2.png
 %{_iconsdir}/linphone2.png
 %{_miconsdir}/linphone2.png
-%{_datadir}/linphone
+%{_datadir}/linphone/
 
-%files -n %{libname_linphone}
-%defattr(-,root,root)
+%files -n %{liblinphone}
 %{_libdir}/liblinphone.so.%{linphone_major}*
 
-%files -n %{libname_mediastreamer}
-%defattr(-,root,root)
+%files -n %{libmediastreamer}
 %{_libdir}/libmediastreamer.so.%{mediastreamer_major}*
 
 %files -n %{libname_devel}
-%defattr(-,root,root)
-#%doc %{_datadir}/doc/mediastreamer/
-%{_includedir}/linphone
 %{multiarch_includedir}/linphone/config.h
-%{_includedir}/mediastreamer2
+%{_includedir}/linphone/
+%{_includedir}/mediastreamer2/
 %{_libdir}/*.so
 %{_libdir}/pkgconfig/*.pc
