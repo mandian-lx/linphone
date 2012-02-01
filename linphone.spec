@@ -1,24 +1,23 @@
-
 %define linphone_major 4
 %define mediastreamer_major 1
 %define liblinphone %mklibname %{name} %linphone_major
 %define libmediastreamer %mklibname mediastreamer %mediastreamer_major
 %define libname_devel %mklibname -d %{name}
 
-Name: 		linphone
-Version: 	3.4.3
-Release: 	3
-Summary: 	Voice over IP Application
-License: 	GPLv2+
-Group: 		Communications
-URL: 		http://www.linphone.org/
+Name:		linphone
+Version:	3.5.0
+Release:	1
+Summary:	Voice over IP Application
+License:	GPLv2+
+Group:		Communications
+URL:		http://www.linphone.org/
 Source0:	http://download.savannah.gnu.org/releases/linphone/stable/sources/linphone-%{version}.tar.gz
 Source1:	http://download.savannah.gnu.org/releases/linphone/stable/sources/linphone-%{version}.tar.gz.sig
 Source2:	%{name}48.png
 Source3:	%{name}32.png
 Source4:	%{name}16.png
-Patch0:         linphone-3.2.0-imagedir.patch
-Patch8:		linphone-3.3.2-libv4l.patch
+Patch0:		linphone-3.2.0-imagedir.patch
+Patch1:		linphone-3.5.0-link.patch
 BuildRequires:	alsa-lib-devel
 BuildRequires:	desktop-file-utils
 BuildRequires:	exosip-devel >= 3.1.0
@@ -36,7 +35,7 @@ BuildRequires:	libx11-devel
 BuildRequires:	libosip2-devel >= 3.1.0
 BuildRequires:	readline-devel
 BuildRequires:	speex-devel
-BuildRequires:	ortp-devel >= 0.16.3
+BuildRequires:	ortp-devel >= 0.17.0
 BuildRequires:	libv4l-devel
 BuildRequires:	libtheora-devel
 BuildRequires:	pulseaudio-devel
@@ -47,29 +46,29 @@ such as SIP and RTP to make the communications.
 
 #--------------------------------------------------------------------
 %package -n %{liblinphone}
-Summary:        Primary library for %{name}
-Group:          System/Libraries
+Summary:	Primary library for %{name}
+Group:		System/Libraries
 
 %description -n %{liblinphone}
 Primary library for %{name}.
 
 #--------------------------------------------------------------------
 %package -n %{libmediastreamer}
-Summary:        Media Streaming library for %{name}
-Group:          System/Libraries
+Summary:	Media Streaming library for %{name}
+Group:		System/Libraries
 
 %description -n %{libmediastreamer}
 Media Streaming library for %{name}.
 
 #--------------------------------------------------------------------
 %package -n %{libname_devel}
-Summary:        Header files and static libraries from %{name}
-Group:          Development/C
-Requires:       %{liblinphone} = %{version}-%{release}
-Provides:       lib%{name}-devel = %{version}-%{release}
-Provides:       %{name}-devel = %{version}-%{release}
-Obsoletes:      %{name}-devel < %{version}-%{release}
-Obsoletes:      %mklibname -d %{name} 1
+Summary:	Header files and static libraries from %{name}
+Group:		Development/C
+Requires:	%{liblinphone} = %{version}-%{release}
+Provides:	lib%{name}-devel = %{version}-%{release}
+Provides:	%{name}-devel = %{version}-%{release}
+Obsoletes:	%{name}-devel < %{version}-%{release}
+Obsoletes:	%mklibname -d %{name} 1
 
 %description -n %{libname_devel}
 Libraries and includes files for developing programs based on %{name}.
@@ -78,13 +77,13 @@ Libraries and includes files for developing programs based on %{name}.
 %prep
 %setup -q
 %patch0 -p0 -b .image-dir
-%patch8 -p0 -b .libv4l
+%patch1 -p0 -b .link
 
 %build
-autoreconf -fi
+./autogen.sh
 
 ( pushd mediastreamer2
-autoreconf -fi
+./autogen.sh
 %before_configure
 popd )
 
@@ -98,13 +97,13 @@ popd )
 %make
 
 %install
-rm -rf %{buildroot}
+%__rm -rf %{buildroot}
 
 %makeinstall_std
 
-%find_lang %{name}
+%find_lang %{name} --all-name --with-man
 
-perl -pi -e "s|linphone/linphone2\.png|linphone2|g" %{buildroot}%{_datadir}/applications/linphone.desktop
+%__perl -pi -e "s|linphone/linphone2\.png|linphone2|g" %{buildroot}%{_datadir}/applications/linphone.desktop
 desktop-file-install \
 	--vendor="" \
 	--add-category="VideoConference" \
@@ -113,39 +112,37 @@ desktop-file-install \
 	%{buildroot}%{_datadir}/applications/linphone.desktop
 
 #icons
-mkdir -p %{buildroot}%{_iconsdir}/hicolor/{16x16,32x32,48x48}/apps
-install -m 644 %{_sourcedir}/linphone16.png \
+%__mkdir_p %{buildroot}%{_iconsdir}/hicolor/{16x16,32x32,48x48}/apps
+%__install -m 644 %{SOURCE4} \
 	%{buildroot}%{_iconsdir}/hicolor/16x16/apps/linphone2.png
-install -m 644 %{_sourcedir}/linphone32.png \
+%__install -m 644 %{SOURCE3} \
 	%{buildroot}%{_iconsdir}/hicolor/32x32/apps/linphone2.png
-install -m 644 %{_sourcedir}/linphone48.png \
+%__install -m 644 %{SOURCE2} \
 	%{buildroot}%{_iconsdir}/hicolor/48x48/apps/linphone2.png
-mkdir -p %{buildroot}/%{_miconsdir}
-ln -s ../hicolor/16x16/apps/linphone2.png \
+%__mkdir_p %{buildroot}/%{_miconsdir}
+%__ln_s ../hicolor/16x16/apps/linphone2.png \
       %{buildroot}/%{_miconsdir}/
-mkdir -p %{buildroot}/%{_iconsdir}
-ln -s hicolor/32x32/apps/linphone2.png \
+%__mkdir_p %{buildroot}/%{_iconsdir}
+%__ln_s hicolor/32x32/apps/linphone2.png \
       %{buildroot}/%{_iconsdir}/
-mkdir -p %{buildroot}/%{_liconsdir}
-ln -s ../hicolor/48x48/apps/linphone2.png \
+%__mkdir_p %{buildroot}/%{_liconsdir}
+%__ln_s ../hicolor/48x48/apps/linphone2.png \
       %{buildroot}/%{_liconsdir}/
 
 %multiarch_includes %{buildroot}%{_includedir}/linphone/config.h
 
 # remove unwanted docs, generated if doxygen is installed
-rm -rf %{buildroot}%{_docdir}/ortp %{buildroot}%{_docdir}/mediastreamer
+%__rm -rf %{buildroot}%{_docdir}/ortp %{buildroot}%{_docdir}/mediastreamer
 
 # don't ship .la:
-rm -f %{buildroot}%{_libdir}/*.la
-
+%__rm -f %{buildroot}%{_libdir}/*.la
 
 %files -f %{name}.lang
 %doc COPYING README AUTHORS BUGS INSTALL ChangeLog
-%doc %_datadir/gnome/help/%{name}
+%doc %{_datadir}/gnome/help/%{name}
 %{_bindir}/linphone*
-%{_libdir}/mediastream/
+%{_bindir}/mediastream
 %{_mandir}/man1/*
-%lang(cs) %_mandir/cs/man1/*
 %{_datadir}/pixmaps/%{name}/
 %{_datadir}/sounds/%{name}/
 %{_datadir}/tutorials/%{name}/
