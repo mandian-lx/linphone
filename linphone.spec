@@ -6,7 +6,7 @@
 
 Name:		linphone
 Version:	3.5.0
-Release:	1
+Release:	2
 Summary:	Voice over IP Application
 License:	GPLv2+
 Group:		Communications
