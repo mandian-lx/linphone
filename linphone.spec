@@ -5,8 +5,8 @@
 %define libname_devel %mklibname -d %{name}
 
 Name:		linphone
-Version:	3.5.0
-Release:	2
+Version:	3.5.2
+Release:	1
 Summary:	Voice over IP Application
 License:	GPLv2+
 Group:		Communications
@@ -18,7 +18,8 @@ Source3:	%{name}32.png
 Source4:	%{name}16.png
 Patch0:		linphone-3.2.0-imagedir.patch
 Patch1:		linphone-3.5.0-link.patch
-BuildRequires:	alsa-lib-devel
+Patch2:		linphone-3.5.2-ffmpeg-0.11.patch
+BuildRequires:	pkgconfig(alsa)
 BuildRequires:	desktop-file-utils
 BuildRequires:	exosip-devel >= 3.1.0
 BuildRequires:	ffmpeg-devel
@@ -78,6 +79,7 @@ Libraries and includes files for developing programs based on %{name}.
 %setup -q
 %patch0 -p0 -b .image-dir
 %patch1 -p0 -b .link
+%patch2 -p1 -b .ffmpeg11~
 
 %build
 ./autogen.sh
@@ -145,7 +147,6 @@ desktop-file-install \
 %{_mandir}/man1/*
 %{_datadir}/pixmaps/%{name}/
 %{_datadir}/sounds/%{name}/
-%{_datadir}/tutorials/%{name}/
 %{_datadir}/images/linphone/nowebcamCIF.jpg
 %{_datadir}/applications/*
 %{_iconsdir}/hicolor/*/apps/linphone2.png
