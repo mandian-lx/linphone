@@ -1,6 +1,2 @@
 sources:
-  "linphone16.png:"	671958aafa4d1710c2f5b80c46d35a8b79349576
-  "linphone32.png:"	042549a93b9616ff9345bf15525a66e38733b150
-  "linphone-3.5.2.tar.gz:"	d0dde9d421b7cf6893c8e5acb969d5bd4a04a231
-  "linphone-3.5.2.tar.gz.sig:"	9b3c476a0a7ae322642edfaa924ca231dbdfbe81
-  "linphone48.png:"	fc62e118a2fcc94f16fca136241a81591a0bb0ef
+  "linphone-3.5.2.tar.gz": d0dde9d421b7cf6893c8e5acb969d5bd4a04a231
