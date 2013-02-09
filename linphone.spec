@@ -19,6 +19,7 @@ Source4:	%{name}16.png
 Patch0:		linphone-3.2.0-imagedir.patch
 Patch1:		linphone-3.5.0-link.patch
 Patch2:		linphone-3.5.2-ffmpeg-0.11.patch
+Patch3:		linphone-3.5.2-exosip-4.0.0.patch
 BuildRequires:	desktop-file-utils
 BuildRequires:	gtk-doc
 BuildRequires:	intltool
@@ -79,6 +80,7 @@ Libraries and includes files for developing programs based on %{name}.
 %patch0 -p0 -b .image-dir
 %patch1 -p0 -b .link
 %patch2 -p1 -b .ffmpeg11~
+%patch3 -p1 -b .exosip4~
 
 %build
 ./autogen.sh
