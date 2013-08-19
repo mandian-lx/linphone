@@ -1,25 +1,29 @@
-%define major 4
-%define mediastreamer_major 1
-%define libname %mklibname %{name} %{major}
-%define libmediastreamer %mklibname mediastreamer %{mediastreamer_major}
+%define linphone_major 5
+%define mediastreamer_base_major 3
+%define mediastreamer_voip_major 3
+%define lpcxml_major 0
+%define liblinphone %mklibname %{name} %{linphone_major}
+%define libmediastreamer_base %mklibname mediastreamer_base %{mediastreamer_base_major}
+%define libmediastreamer_voip %mklibname mediastreamer_voip %{mediastreamer_voip_major}
+%define liblpcxml %mklibname lpc2xml %{lpcxml_major}
 %define devname %mklibname -d %{name}
 
 Summary:	Voice over IP Application
 Name:		linphone
-Version:	3.5.2
-Release:	2
+Version:	3.6.1
+Release:	3
 License:	GPLv2+
 Group:		Communications
 Url:		http://www.linphone.org/
 Source0:	http://download.savannah.gnu.org/releases/linphone/stable/sources/linphone-%{version}.tar.gz
-Source1:	http://download.savannah.gnu.org/releases/linphone/stable/sources/linphone-%{version}.tar.gz.sig
+# Source1:	http://download.savannah.gnu.org/releases/linphone/stable/sources/linphone-%{version}.tar.gz.sig
 Source2:	%{name}48.png
 Source3:	%{name}32.png
 Source4:	%{name}16.png
-Patch0:		linphone-3.2.0-imagedir.patch
-Patch1:		linphone-3.5.0-link.patch
-Patch2:		linphone-3.5.2-ffmpeg-0.11.patch
-Patch3:		linphone-3.5.2-exosip-4.0.0.patch
+Patch0:		linphone-3.6.1-imagedir.patch
+Patch1:		linphone-3.6.1-link.patch
+# We don't have exosip-4.0 atm
+Patch2:		linphone-exosip-4.0.0.patch
 BuildRequires:	desktop-file-utils
 BuildRequires:	gtk-doc
 BuildRequires:	intltool
@@ -29,6 +33,8 @@ BuildRequires:	ffmpeg-devel
 BuildRequires:	gettext-devel
 BuildRequires:	gsm-devel
 BuildRequires:	readline-devel
+# http://lists.gnu.org/archive/html/linphone-developers/2013-04/msg00016.html
+BuildRequires:	vim-common
 BuildRequires:	pkgconfig(alsa)
 BuildRequires:	pkgconfig(glib-2.0)
 BuildRequires:	pkgconfig(gtk+-2.0)
@@ -36,6 +42,7 @@ BuildRequires:	pkgconfig(libosip2)
 BuildRequires:	pkgconfig(libpulse)
 BuildRequires:	pkgconfig(libv4l1)
 BuildRequires:	pkgconfig(libv4l2)
+BuildRequires:	pkgconfig(glew)
 BuildRequires:	pkgconfig(ortp) >= 0.17.0
 BuildRequires:	pkgconfig(speex)
 BuildRequires:	pkgconfig(theora)
@@ -47,49 +54,118 @@ BuildRequires:	pkgconfig(xv)
 Linphone is web-phone with a GNOME2 interface. It uses open protocols
 such as SIP and RTP to make the communications.
 
-%package -n %{libname}
+%files -f %{name}.lang
+%doc COPYING README AUTHORS BUGS INSTALL ChangeLog
+%doc %{_datadir}/gnome/help/%{name}
+%{_bindir}/linphone*
+%{_bindir}/mediastream
+%{_bindir}/lpc2xml_test
+%{_bindir}/xml2lpc_test
+%{_mandir}/man1/*
+%{_datadir}/pixmaps/%{name}/
+%{_datadir}/sounds/%{name}/
+%{_datadir}/images/linphone/nowebcamCIF.jpg
+%{_datadir}/applications/*
+%{_iconsdir}/hicolor/*/apps/linphone2.png
+%{_liconsdir}/linphone2.png
+%{_iconsdir}/linphone2.png
+%{_miconsdir}/linphone2.png
+%{_datadir}/linphone/
+
+#--------------------------------------------------------------------
+
+%package -n %{liblinphone}
 Summary:	Primary library for %{name}
 Group:		System/Libraries
 
-%description -n %{libname}
+%description -n %{liblinphone}
 Primary library for %{name}.
 
-%package -n %{libmediastreamer}
-Summary:	Media Streaming library for %{name}
+%files -n %{liblinphone}
+%{_libdir}/liblinphone.so.%{linphone_major}*
+
+#--------------------------------------------------------------------
+
+%package -n %{liblpcxml}
+Summary:	Shared libs for %{name}
 Group:		System/Libraries
 
-%description -n %{libmediastreamer}
-Media Streaming library for %{name}.
+%description -n %{liblpcxml}
+Shared libs for %{name}
+
+%files -n %{liblpcxml}
+%{_libdir}/liblpc2xml.so.%{lpcxml_major}*
+%{_libdir}/libxml2lpc.so.%{lpcxml_major}*
+
+#--------------------------------------------------------------------
+
+%package -n %{libmediastreamer_base}
+Summary:	Media Streaming Base library for %{name}
+Group:		System/Libraries
+
+%description -n %{libmediastreamer_base}
+Media Streaming library for %{name} - base part.
+
+%files -n %{libmediastreamer_base}
+%{_libdir}/libmediastreamer_base.so.%{mediastreamer_base_major}*
+
+#--------------------------------------------------------------------
+
+%package -n %{libmediastreamer_voip}
+Summary:	Media Streaming VoIP library for %{name}
+Group:		System/Libraries
+
+%description -n %{libmediastreamer_voip}
+Media Streaminglibrary for %{name} - VoIP part.
+
+%files -n %{libmediastreamer_voip}
+%{_libdir}/libmediastreamer_voip.so.%{mediastreamer_voip_major}*
+
+#--------------------------------------------------------------------
 
 %package -n %{devname}
 Summary:	Header files and static libraries from %{name}
 Group:		Development/C
-Requires:	%{libname} = %{version}-%{release}
-Requires:	%{libmediastreamer} = %{version}-%{release}
+Requires:	%{liblinphone} = %{version}-%{release}
+Requires:	%{liblpcxml} = %{version}-%{release}
+Requires:	%{libmediastreamer_base} = %{version}-%{release}
+Requires:	%{libmediastreamer_voip} = %{version}-%{release}
+Provides:	lib%{name}-devel = %{version}-%{release}
 Provides:	%{name}-devel = %{version}-%{release}
 
 %description -n %{devname}
 Libraries and includes files for developing programs based on %{name}.
 
+%files -n %{devname}
+%{_includedir}/linphone/
+%{_includedir}/mediastreamer2/
+%{_libdir}/*.so
+%{_libdir}/pkgconfig/*.pc
+
+#--------------------------------------------------------------------
+
 %prep
 %setup -q
-%apply_patches
+find '(' -name '*.c' -o -name '*.h' ')' -print0 | xargs -0 sed -i -e 's,\r$,,'
+%patch0 -p0 -b .image-dir
+%patch1 -p0 -b .link
+%patch2 -p1 -b .exosip~
+
 ./autogen.sh
 
+%build
 ( pushd mediastreamer2
 ./autogen.sh
 %before_configure
 popd )
 
-
-%build
 %configure2_5x \
 	--disable-static \
+	--disable-rpath \
 	--enable-alsa \
 	--disable-strict \
 	--enable-external-ortp \
 	--enable-ipv6
-
 %make
 
 %install
@@ -97,7 +173,7 @@ popd )
 
 %find_lang %{name} --all-name --with-man
 
-perl -pi -e "s|linphone/linphone2\.png|linphone2|g" %{buildroot}%{_datadir}/applications/linphone.desktop
+sed -i -e "s|linphone/linphone2\.png|linphone2|g" %{buildroot}%{_datadir}/applications/linphone.desktop
 desktop-file-install \
 	--vendor="" \
 	--add-category="VideoConference" \
@@ -123,37 +199,5 @@ mkdir -p %{buildroot}/%{_liconsdir}
 ln -s ../hicolor/48x48/apps/linphone2.png \
       %{buildroot}/%{_liconsdir}/
 
-%multiarch_includes %{buildroot}%{_includedir}/linphone/config.h
-
 # remove unwanted docs, generated if doxygen is installed
-rm -rf %{buildroot}%{_docdir}/ortp %{buildroot}%{_docdir}/mediastreamer
-
-%files -f %{name}.lang
-%doc COPYING README AUTHORS BUGS INSTALL ChangeLog
-%doc %{_datadir}/gnome/help/%{name}
-%{_bindir}/linphone*
-%{_bindir}/mediastream
-%{_mandir}/man1/*
-%{_datadir}/pixmaps/%{name}/
-%{_datadir}/sounds/%{name}/
-%{_datadir}/images/linphone/nowebcamCIF.jpg
-%{_datadir}/applications/*
-%{_iconsdir}/hicolor/*/apps/linphone2.png
-%{_liconsdir}/linphone2.png
-%{_iconsdir}/linphone2.png
-%{_miconsdir}/linphone2.png
-%{_datadir}/linphone/
-
-%files -n %{libname}
-%{_libdir}/liblinphone.so.%{major}*
-
-%files -n %{libmediastreamer}
-%{_libdir}/libmediastreamer.so.%{mediastreamer_major}*
-
-%files -n %{devname}
-%{multiarch_includedir}/linphone/config.h
-%{_includedir}/linphone/
-%{_includedir}/mediastreamer2/
-%{_libdir}/*.so
-%{_libdir}/pkgconfig/*.pc
-
+rm -rf %{buildroot}%{_docdir}/ortp %{buildroot}%{_docdir}/mediastreamer* %{buildroot}%{_docdir}/%{name}*
