@@ -11,7 +11,7 @@
 Summary:	Voice over IP Application
 Name:		linphone
 Version:	3.6.1
-Release:	3
+Release:	4
 License:	GPLv2+
 Group:		Communications
 Url:		http://www.linphone.org/
