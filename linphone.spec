@@ -1,17 +1,15 @@
-%define linphone_major 5
+%define linphone_major 6
 %define mediastreamer_base_major 3
 %define mediastreamer_voip_major 3
-%define lpcxml_major 0
 %define liblinphone %mklibname %{name} %{linphone_major}
 %define libmediastreamer_base %mklibname mediastreamer_base %{mediastreamer_base_major}
 %define libmediastreamer_voip %mklibname mediastreamer_voip %{mediastreamer_voip_major}
-%define liblpcxml %mklibname lpc2xml %{lpcxml_major}
 %define devname %mklibname -d %{name}
 
 Summary:	Voice over IP Application
 Name:		linphone
-Version:	3.6.1
-Release:	9
+Version:	3.7.0
+Release:	1
 License:	GPLv2+
 Group:		Communications
 Url:		http://www.linphone.org/
@@ -21,14 +19,11 @@ Source2:	%{name}48.png
 Source3:	%{name}32.png
 Source4:	%{name}16.png
 Patch0:		linphone-3.6.1-imagedir.patch
-Patch1:		linphone-3.6.1-link.patch
-# We don't have exosip-4.0 atm
-Patch2:		linphone-exosip-4.0.0.patch
+Patch1:		linphone-3.7.0-link.patch
 BuildRequires:	desktop-file-utils
 BuildRequires:	gtk-doc
 BuildRequires:	intltool
 BuildRequires:	gettext
-BuildRequires:	exosip-devel
 BuildRequires:	ffmpeg-devel
 BuildRequires:	gettext-devel
 BuildRequires:	gsm-devel
@@ -36,6 +31,7 @@ BuildRequires:	readline-devel
 # http://lists.gnu.org/archive/html/linphone-developers/2013-04/msg00016.html
 BuildRequires:	vim-common
 BuildRequires:	pkgconfig(alsa)
+BuildRequires:	pkgconfig(belle-sip)
 BuildRequires:	pkgconfig(glib-2.0)
 BuildRequires:	pkgconfig(gtk+-2.0)
 BuildRequires:	pkgconfig(libosip2)
@@ -43,7 +39,7 @@ BuildRequires:	pkgconfig(libpulse)
 BuildRequires:	pkgconfig(libv4l1)
 BuildRequires:	pkgconfig(libv4l2)
 BuildRequires:	pkgconfig(glew)
-BuildRequires:	pkgconfig(ortp) >= 0.17.0
+BuildRequires:	pkgconfig(ortp) >= 0.23.0
 BuildRequires:	pkgconfig(speex)
 BuildRequires:	pkgconfig(theora)
 BuildRequires:	pkgconfig(x11)
@@ -58,6 +54,7 @@ such as SIP and RTP to make the communications.
 %doc COPYING README AUTHORS BUGS INSTALL ChangeLog
 %doc %{_datadir}/gnome/help/%{name}
 %{_bindir}/linphone*
+%{_bindir}/lp-gen-wrappers
 %{_bindir}/mediastream
 %{_bindir}/lpc2xml_test
 %{_bindir}/xml2lpc_test
@@ -66,6 +63,7 @@ such as SIP and RTP to make the communications.
 %{_datadir}/sounds/%{name}/
 %{_datadir}/images/linphone/nowebcamCIF.jpg
 %{_datadir}/applications/*
+%{_datadir}/tutorials/%{name}
 %{_iconsdir}/hicolor/*/apps/linphone2.png
 %{_liconsdir}/linphone2.png
 %{_iconsdir}/linphone2.png
@@ -83,19 +81,6 @@ Primary library for %{name}.
 
 %files -n %{liblinphone}
 %{_libdir}/liblinphone.so.%{linphone_major}*
-
-#--------------------------------------------------------------------
-
-%package -n %{liblpcxml}
-Summary:	Shared libs for %{name}
-Group:		System/Libraries
-
-%description -n %{liblpcxml}
-Shared libs for %{name}
-
-%files -n %{liblpcxml}
-%{_libdir}/liblpc2xml.so.%{lpcxml_major}*
-%{_libdir}/libxml2lpc.so.%{lpcxml_major}*
 
 #--------------------------------------------------------------------
 
@@ -127,7 +112,6 @@ Media Streaminglibrary for %{name} - VoIP part.
 Summary:	Header files and static libraries from %{name}
 Group:		Development/C
 Requires:	%{liblinphone} = %{version}-%{release}
-Requires:	%{liblpcxml} = %{version}-%{release}
 Requires:	%{libmediastreamer_base} = %{version}-%{release}
 Requires:	%{libmediastreamer_voip} = %{version}-%{release}
 Provides:	lib%{name}-devel = %{version}-%{release}
@@ -148,8 +132,7 @@ Libraries and includes files for developing programs based on %{name}.
 %setup -q
 find '(' -name '*.c' -o -name '*.h' ')' -print0 | xargs -0 sed -i -e 's,\r$,,'
 %patch0 -p0 -b .image-dir
-%patch1 -p0 -b .link
-%patch2 -p1 -b .exosip~
+%patch1 -p1 -b .link
 
 ./autogen.sh
 
