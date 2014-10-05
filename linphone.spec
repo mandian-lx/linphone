@@ -63,7 +63,6 @@ such as SIP and RTP to make the communications.
 %{_datadir}/sounds/%{name}/
 %{_datadir}/images/linphone/nowebcamCIF.jpg
 %{_datadir}/applications/*
-%{_datadir}/tutorials/%{name}
 %{_iconsdir}/hicolor/*/apps/linphone2.png
 %{_liconsdir}/linphone2.png
 %{_iconsdir}/linphone2.png
@@ -125,6 +124,7 @@ Libraries and includes files for developing programs based on %{name}.
 %{_includedir}/mediastreamer2/
 %{_libdir}/*.so
 %{_libdir}/pkgconfig/*.pc
+%{_datadir}/tutorials/%{name}
 
 #--------------------------------------------------------------------
 
