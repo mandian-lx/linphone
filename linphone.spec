@@ -9,7 +9,7 @@
 Summary:	Voice over IP Application
 Name:		linphone
 Version:	3.7.0
-Release:	0.1
+Release:	0.2
 License:	GPLv2+
 Group:		Communications
 Url:		http://www.linphone.org/
