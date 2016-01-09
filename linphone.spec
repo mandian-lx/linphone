@@ -1,15 +1,15 @@
-%define linphone_major 6
-%define mediastreamer_base_major 3
-%define mediastreamer_voip_major 3
+%define _disable_rebuild_configure 1
+%define _disable_lto 1
+%define _disable_ld_no_undefined 1
+
+%define linphone_major 8
 %define liblinphone %mklibname %{name} %{linphone_major}
-%define libmediastreamer_base %mklibname mediastreamer_base %{mediastreamer_base_major}
-%define libmediastreamer_voip %mklibname mediastreamer_voip %{mediastreamer_voip_major}
 %define devname %mklibname -d %{name}
 
 Summary:	Voice over IP Application
 Name:		linphone
-Version:	3.7.0
-Release:	4
+Version:	3.9.1
+Release:	1
 License:	GPLv2+
 Group:		Communications
 Url:		http://www.linphone.org/
@@ -18,8 +18,6 @@ Source0:	http://download.savannah.gnu.org/releases/linphone/stable/sources/linph
 Source2:	%{name}48.png
 Source3:	%{name}32.png
 Source4:	%{name}16.png
-Patch0:		linphone-3.6.1-imagedir.patch
-Patch1:		linphone-3.7.0-link.patch
 BuildRequires:	desktop-file-utils
 BuildRequires:	gtk-doc
 BuildRequires:	intltool
@@ -39,6 +37,7 @@ BuildRequires:	pkgconfig(libpulse)
 BuildRequires:	pkgconfig(libv4l1)
 BuildRequires:	pkgconfig(libv4l2)
 BuildRequires:	pkgconfig(glew)
+BuildRequires:	pkgconfig(mediastreamer)
 BuildRequires:	pkgconfig(ortp) >= 0.23.0
 BuildRequires:	pkgconfig(speex)
 BuildRequires:	pkgconfig(theora)
@@ -54,16 +53,17 @@ such as SIP and RTP to make the communications.
 %doc COPYING README AUTHORS BUGS INSTALL ChangeLog
 %doc %{_datadir}/gnome/help/%{name}
 %{_bindir}/linphone*
+%{_bindir}/lp-autoanswer
+%{_bindir}/lp-test-ecc
 %{_bindir}/lp-gen-wrappers
-%{_bindir}/mediastream
 %{_bindir}/lpc2xml_test
 %{_bindir}/xml2lpc_test
 %{_mandir}/man1/*
+%{_datadir}/appdata/%{name}.appdata.xml
 %{_datadir}/pixmaps/%{name}/
 %{_datadir}/sounds/%{name}/
-%{_datadir}/images/linphone/nowebcamCIF.jpg
 %{_datadir}/applications/*
-%{_iconsdir}/hicolor/*/apps/linphone2.png
+%{_iconsdir}/hicolor/*/*/linphone*.*
 %{_liconsdir}/linphone2.png
 %{_iconsdir}/linphone2.png
 %{_miconsdir}/linphone2.png
@@ -83,36 +83,10 @@ Primary library for %{name}.
 
 #--------------------------------------------------------------------
 
-%package -n %{libmediastreamer_base}
-Summary:	Media Streaming Base library for %{name}
-Group:		System/Libraries
-
-%description -n %{libmediastreamer_base}
-Media Streaming library for %{name} - base part.
-
-%files -n %{libmediastreamer_base}
-%{_libdir}/libmediastreamer_base.so.%{mediastreamer_base_major}*
-
-#--------------------------------------------------------------------
-
-%package -n %{libmediastreamer_voip}
-Summary:	Media Streaming VoIP library for %{name}
-Group:		System/Libraries
-
-%description -n %{libmediastreamer_voip}
-Media Streaminglibrary for %{name} - VoIP part.
-
-%files -n %{libmediastreamer_voip}
-%{_libdir}/libmediastreamer_voip.so.%{mediastreamer_voip_major}*
-
-#--------------------------------------------------------------------
-
 %package -n %{devname}
 Summary:	Header files and static libraries from %{name}
 Group:		Development/C
 Requires:	%{liblinphone} = %{version}-%{release}
-Requires:	%{libmediastreamer_base} = %{version}-%{release}
-Requires:	%{libmediastreamer_voip} = %{version}-%{release}
 Provides:	lib%{name}-devel = %{version}-%{release}
 Provides:	%{name}-devel = %{version}-%{release}
 
@@ -121,7 +95,6 @@ Libraries and includes files for developing programs based on %{name}.
 
 %files -n %{devname}
 %{_includedir}/linphone/
-%{_includedir}/mediastreamer2/
 %{_libdir}/*.so
 %{_libdir}/pkgconfig/*.pc
 %{_datadir}/tutorials/%{name}
@@ -131,16 +104,10 @@ Libraries and includes files for developing programs based on %{name}.
 %prep
 %setup -q
 find '(' -name '*.c' -o -name '*.h' ')' -print0 | xargs -0 sed -i -e 's,\r$,,'
-%patch0 -p0 -b .image-dir
-%patch1 -p1 -b .link
-
-./autogen.sh
 
 %build
-( pushd mediastreamer2
-./autogen.sh
-%before_configure
-popd )
+export CC=gcc
+export CXX=g++
 
 %configure2_5x \
 	--disable-static \
@@ -148,6 +115,7 @@ popd )
 	--enable-alsa \
 	--disable-strict \
 	--enable-external-ortp \
+	--enable-external-mediastreamer \
 	--enable-ipv6
 %make
 
