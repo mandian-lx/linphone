@@ -20,9 +20,6 @@ Url:		https://www.linphone.org/
 #Source0:	https://github.com/BelledonneCommunications/%{name}/archive/%{version}/%{name}-%{version}.tar.gz
 Source0:	http://download.savannah.gnu.org/releases/%{name}/stable/sources/%{name}-%{version}.tar.gz
 Source1:	http://download.savannah.gnu.org/releases/%{name}/stable/sources/%{name}-%{version}.tar.gz.sig
-Source2:	%{name}48.png
-Source3:	%{name}32.png
-Source4:	%{name}16.png
 Patch0:		%{name}-3.10.2-daemon_cmake.patch
 Patch1:		%{name}-3.10.2-bctoolbox.patch
 
