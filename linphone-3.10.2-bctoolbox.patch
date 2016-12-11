@@ -1,0 +1,246 @@
+--- linphone-3.10.2/coreapi/bellesip_sal/sal_impl.c.orig
++++ linphone-3.10.2/coreapi/bellesip_sal/sal_impl.c
+@@ -1124,7 +1124,7 @@
+ 	bctbx_list_t *elem=bctbx_list_find_custom(ctx->supported_tags,(bctbx_compare_func)strcasecmp,tag);
+ 	if (elem){
+ 		ms_free(elem->data);
+-		ctx->supported_tags=bctbx_list_remove_link(ctx->supported_tags,elem);
++		ctx->supported_tags=bctbx_list_erase_link(ctx->supported_tags,elem);
+ 		make_supported_header(ctx);
+ 	}
+ }
+--- linphone-3.10.2/coreapi/vtables.c.orig
++++ linphone-3.10.2/coreapi/vtables.c
+@@ -48,7 +48,7 @@
+ 		next_it=it->next;
+ 		if (ref->valid==0){
+ 			ref->valid=0;
+-			lc->vtable_refs=bctbx_list_remove_link(lc->vtable_refs, it);
++			lc->vtable_refs=bctbx_list_erase_link(lc->vtable_refs, it);
+ 			ms_free(ref);
+ 		}
+ 		it=next_it;
+--- linphone-3.10.2/coreapi/callbacks.c.orig
++++ linphone-3.10.2/coreapi/callbacks.c
+@@ -1103,7 +1103,7 @@
+ 	}
+ 	if (i>=10){
+ 		ms_free(tail->data);
+-		lc->last_recv_msg_ids=bctbx_list_remove_link(lc->last_recv_msg_ids,tail);
++		lc->last_recv_msg_ids=bctbx_list_erase_link(lc->last_recv_msg_ids,tail);
+ 	}
+ 	return is_duplicate;
+ }
+--- linphone-3.10.2/coreapi/misc.c.orig
++++ linphone-3.10.2/coreapi/misc.c
+@@ -1880,7 +1880,7 @@
+ 	for(elem=t->hooks;elem!=NULL;elem=elem->next){
+ 		Hook *h=(Hook*)elem->data;
+ 		if (h->fun==hook && h->data==hook_data){
+-			t->hooks = bctbx_list_remove_link(t->hooks,elem);
++			t->hooks = bctbx_list_erase_link(t->hooks,elem);
+ 			ms_free(h);
+ 			return;
+ 		}
+--- linphone-3.10.2/coreapi/linphonecore.c.orig
++++ linphone-3.10.2/coreapi/linphonecore.c
+@@ -2074,7 +2074,7 @@
+ 	linphone_core_notify_friend_list_removed(lc, list);
+ 	list->lc = NULL;
+ 	linphone_friend_list_unref(list);
+-	lc->friends_lists = bctbx_list_remove_link(lc->friends_lists, elem);
++	lc->friends_lists = bctbx_list_erase_link(lc->friends_lists, elem);
+ }
+ 
+ void linphone_core_add_friend_list(LinphoneCore *lc, LinphoneFriendList *list) {
+@@ -2635,7 +2635,7 @@
+ 		LinphoneProxyConfig* cfg = (LinphoneProxyConfig*)elem->data;
+ 		next=elem->next;
+ 		if (ms_time(NULL) - cfg->deletion_date > 32) {
+-			lc->sip_conf.deleted_proxies =bctbx_list_remove_link(lc->sip_conf.deleted_proxies,elem);
++			lc->sip_conf.deleted_proxies =bctbx_list_erase_link(lc->sip_conf.deleted_proxies,elem);
+ 			ms_message("Proxy config for [%s] is definitely removed from core.",linphone_proxy_config_get_addr(cfg));
+ 			_linphone_proxy_config_release_ops(cfg);
+ 			linphone_proxy_config_unref(cfg);
+@@ -2672,7 +2672,7 @@
+ 	}
+ 	/*purge completed requests */
+ 	while((elem=bctbx_list_find(lc->bl_reqs,NULL))!=NULL){
+-		lc->bl_reqs=bctbx_list_remove_link(lc->bl_reqs,elem);
++		lc->bl_reqs=bctbx_list_erase_link(lc->bl_reqs,elem);
+ 	}
+ }
+ 
+@@ -6971,7 +6971,7 @@
+ 	it=bctbx_list_find(the_calls,call);
+ 	if (it)
+ 	{
+-		the_calls = bctbx_list_remove_link(the_calls,it);
++		the_calls = bctbx_list_erase_link(the_calls,it);
+ 	}
+ 	else
+ 	{
+--- linphone-3.10.2/coreapi/linphonecall.c.orig
++++ linphone-3.10.2/coreapi/linphonecall.c
+@@ -4649,7 +4649,7 @@
+ 			}
+ 			elem=prevelem;
+ 			linphone_call_log_unref((LinphoneCallLog*)elem->data);
+-			lc->call_logs=bctbx_list_remove_link(lc->call_logs,elem);
++			lc->call_logs=bctbx_list_erase_link(lc->call_logs,elem);
+ 		}
+ 		call_logs_write_to_config_file(lc);
+ 	}
+--- linphone-3.10.2/coreapi/ldap/ldapprovider.c.orig
++++ linphone-3.10.2/coreapi/ldap/ldapprovider.c
+@@ -635,7 +635,7 @@
+ 	bctbx_list_t* list_entry = bctbx_list_find_custom(ldap_cp->requests, linphone_ldap_request_entry_compare_strong, req);
+ 	if( list_entry ) {
+ 		ms_message("Delete search %p", req);
+-		ldap_cp->requests = bctbx_list_remove_link(ldap_cp->requests, list_entry);
++		ldap_cp->requests = bctbx_list_erase_link(ldap_cp->requests, list_entry);
+ 		ldap_cp->req_count--;
+ 		ret = 0; // return OK if we found it in the monitored requests
+ 	} else {
+--- linphone-3.10.2/coreapi/friendlist.c.orig
++++ linphone-3.10.2/coreapi/friendlist.c
+@@ -477,7 +477,7 @@
+ 
+ 	lf->friend_list = NULL;
+ 	linphone_friend_unref(lf);
+-	list->friends = bctbx_list_remove_link(list->friends, elem);
++	list->friends = bctbx_list_erase_link(list->friends, elem);
+ 	return LinphoneFriendListOK;
+ }
+ 
+--- linphone-3.10.2/gtk/propertybox.c.orig
++++ linphone-3.10.2/gtk/propertybox.c
+@@ -807,7 +807,7 @@
+ 			else before=sel_elem;
+ 			codec_list=bctbx_list_insert(codec_list,before,pt);
+ 		}
+-		codec_list=bctbx_list_remove_link(codec_list,sel_elem);
++		codec_list=bctbx_list_erase_link(codec_list,sel_elem);
+ 		if (pt->type==PAYLOAD_VIDEO)
+ 			linphone_core_set_video_codecs(lc,codec_list);
+ 		else linphone_core_set_audio_codecs(lc,codec_list);
+--- linphone-3.10.2/mediastreamer2/tools/bench.c.orig
++++ linphone-3.10.2/mediastreamer2/tools/bench.c
+@@ -298,7 +298,7 @@
+ 	bctbx_list_t *it;
+ 	for(it=bench->tsessions;it!=NULL;it=bench->tsessions){
+ 		struct test_session *ts = (struct test_session *)it->data;
+-		bench->tsessions = bctbx_list_remove_link(bench->tsessions, it);
++		bench->tsessions = bctbx_list_erase_link(bench->tsessions, it);
+ 
+ 		ms_ticker_detach(bench->ticker,ts->fplayer);
+ 		ms_ticker_detach(bench->ticker,ts->rtprecv);
+--- linphone-3.10.2/mediastreamer2/src/voip/ice.c.orig
++++ linphone-3.10.2/mediastreamer2/src/voip/ice.c
+@@ -357,7 +357,7 @@
+ 	}
+ 	while ((elem = bctbx_list_find_custom(cl->valid_list, (bctbx_compare_func)ice_find_pair_in_valid_list, pair)) != NULL) {
+ 		ice_free_valid_pair(elem->data);
+-		cl->valid_list = bctbx_list_remove_link(cl->valid_list, elem);
++		cl->valid_list = bctbx_list_erase_link(cl->valid_list, elem);
+ 	}
+ 	ms_free(pair);
+ }
+@@ -666,7 +666,7 @@
+ 	pair = bctbx_list_nth_data(cl->triggered_checks_queue, 0);
+ 	if (pair != NULL) {
+ 		/* Remove the first element in the triggered checks queue. */
+-		cl->triggered_checks_queue = bctbx_list_remove_link(cl->triggered_checks_queue, cl->triggered_checks_queue);
++		cl->triggered_checks_queue = bctbx_list_erase_link(cl->triggered_checks_queue, cl->triggered_checks_queue);
+ 	}
+ 	return pair;
+ }
+@@ -2153,7 +2153,7 @@
+ 			local_addr_str, candidate_type_values[pair->local->type], remote_addr_str, candidate_type_values[pair->remote->type]);
+ 		elem = bctbx_list_find_custom(cl->losing_pairs, (bctbx_compare_func)ice_find_pair_from_candidates, &candidates);
+ 		if (elem != NULL) {
+-			cl->losing_pairs = bctbx_list_remove_link(cl->losing_pairs, elem);
++			cl->losing_pairs = bctbx_list_erase_link(cl->losing_pairs, elem);
+ 			/* Select the losing pair that has just become a valid pair. */
+ 			valid_pair->selected = TRUE;
+ 			if (ice_session_nb_losing_pairs(cl->session) == 0) {
+@@ -2561,7 +2561,7 @@
+ 		if (elem != NULL) {
+ 			IceStunServerRequest *request = (IceStunServerRequest *)elem->data;
+ 			ice_stun_server_request_free(request);
+-			cl->stun_server_requests = bctbx_list_remove_link(cl->stun_server_requests, elem);
++			cl->stun_server_requests = bctbx_list_erase_link(cl->stun_server_requests, elem);
+ 		}
+ 	}
+ }
+@@ -3024,10 +3024,10 @@
+ 					other_candidate = (IceCandidate *)other_elem->data;
+ 					if (other_candidate->priority < candidate->priority) {
+ 						ice_free_candidate(other_candidate);
+-						cl->local_candidates = bctbx_list_remove_link(cl->local_candidates, other_elem);
++						cl->local_candidates = bctbx_list_erase_link(cl->local_candidates, other_elem);
+ 					} else {
+ 						ice_free_candidate(candidate);
+-						cl->local_candidates = bctbx_list_remove_link(cl->local_candidates, elem);
++						cl->local_candidates = bctbx_list_erase_link(cl->local_candidates, elem);
+ 					}
+ 					elem_removed = TRUE;
+ 					break;
+@@ -3229,7 +3229,7 @@
+ 			cl->pairs = bctbx_list_remove(cl->pairs, list->data);
+ 			ice_free_candidate_pair(list->data, cl);
+ 			prev = list->prev;
+-			cl->check_list = bctbx_list_remove_link(cl->check_list, list);
++			cl->check_list = bctbx_list_erase_link(cl->check_list, list);
+ 			list = prev;
+ 		}
+ 	}
+@@ -3370,7 +3370,7 @@
+ 		pair = (IceCandidatePair *)elem->data;
+ 		if (((pair->state == ICP_Waiting) || (pair->state == ICP_Frozen)) && (pair->local->componentID == componentID)) {
+ 			next = elem->next;
+-			*list = bctbx_list_remove_link(*list, elem);
++			*list = bctbx_list_erase_link(*list, elem);
+ 			if (next && next->prev) elem = next->prev;
+ 			else break;	/* The end of the list has been reached, prevent accessing a wrong list->next */
+ 		}
+@@ -3442,7 +3442,7 @@
+ 		ice_pair_set_state(pair, ICP_Failed);
+ 		elem = bctbx_list_find(cl->triggered_checks_queue, pair);
+ 		if (elem != NULL) {
+-			cl->triggered_checks_queue = bctbx_list_remove_link(cl->triggered_checks_queue, elem);
++			cl->triggered_checks_queue = bctbx_list_erase_link(cl->triggered_checks_queue, elem);
+ 		}
+ 	}
+ }
+@@ -3696,7 +3696,7 @@
+ 		if (elem != NULL) {
+ 			IceStunServerRequest *request = (IceStunServerRequest *)elem->data;
+ 			ice_stun_server_request_free(request);
+-			cl->stun_server_requests = bctbx_list_remove_link(cl->stun_server_requests, elem);
++			cl->stun_server_requests = bctbx_list_erase_link(cl->stun_server_requests, elem);
+ 		}
+ 	}
+ }
+--- linphone-3.10.2/mediastreamer2/src/base/msticker.c.orig
++++ linphone-3.10.2/mediastreamer2/src/base/msticker.c
+@@ -292,7 +292,7 @@
+ 		MSFilterTask *t=(MSFilterTask*)elem->data;
+ 		nextelem=elem->next;
+ 		if (t->f==f){
+-			ticker->task_list=bctbx_list_remove_link(ticker->task_list,elem);
++			ticker->task_list=bctbx_list_erase_link(ticker->task_list,elem);
+ 			ms_free(t);
+ 		}
+ 	}
+--- linphone-3.10.2/mediastreamer2/include/mediastreamer2/mscommon.h.orig
++++ linphone-3.10.2/mediastreamer2/include/mediastreamer2/mscommon.h
+@@ -244,7 +244,7 @@
+  * @param list List in which element must be removed
+  * @param element element to remove
+  * @return first element of the modified list
+- * @deprecated Use bctbx_list_remove_link() instead
++ * @deprecated Use bctbx_list_erase_link() instead
+ **/
+ MS2_PUBLIC MS2_DEPRECATED MSList *ms_list_remove_link(MSList *list, MSList *elem);
+ 
