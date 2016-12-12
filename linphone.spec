@@ -30,6 +30,7 @@ BuildRequires:	cmake(BelleSIP) >= 0.24.0
 BuildRequires:	cmake(Mediastreamer2)
 BuildRequires:	cmake(ORTP)
 BuildRequires:	doxygen
+BuildRequires:	graphviz
 BuildRequires:  imagemagick
 # http://lists.gnu.org/archive/html/linphone-developers/2013-04/msg00016.html
 BuildRequires:	vim-common
